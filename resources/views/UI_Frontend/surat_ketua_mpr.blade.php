@@ -3,7 +3,7 @@
 
 <div class="hero-section">
     <div class="container">
-        <h1>SITEMAN-SURAT</h1>
+        <h1>SITEMAN-SUCA</h1>
         <p class="lead">Sistem Informasi Temu-Kembali Pengiriman Surat</p>
     </div>
 </div>

@@ -1,4 +1,4 @@
-# SITEMAN-SURAT
+# SITEMAN-SUCA
 
 Aplikasi pengelolaan surat masuk dan keluar untuk mendukung alur kerja Sekretariat, Caraka, Bagian TU Pimpinan, serta Persuratan dan Kearsipan.
 

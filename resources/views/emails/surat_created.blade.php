@@ -9,7 +9,7 @@
 <body style="margin:0;padding:0;background:#f4f6f8;">
   <!-- Preheader (teks pendek yang muncul di preview inbox) -->
   <span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;mso-hide:all;">
-    Anda menerima surat baru pada sistem SITEMAN-SURAT.
+    Anda menerima surat baru pada sistem SITEMAN-SUCA.
   </span>
 
   <!-- Wrapper -->
@@ -24,7 +24,7 @@
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
                   <td>
-                    <div style="font:700 18px/1.2 'Segoe UI',Arial,sans-serif;color:#bcd7ff;letter-spacing:.08em;">SITEMAN-SURAT</div>
+                    <div style="font:700 18px/1.2 'Segoe UI',Arial,sans-serif;color:#bcd7ff;letter-spacing:.08em;">SITEMAN-SUCA</div>
                     <div style="font:700 22px/1.3 'Segoe UI',Arial,sans-serif;color:#ffffff;margin-top:4px;">
                       Informasi Surat Baru
                     </div>
@@ -46,7 +46,7 @@
                 Yth. {{ $namaPenerima }},
               </div>
               <div style="font:400 14px 'Segoe UI',Arial,sans-serif;color:#4b5563;margin:0;">
-                Anda menerima surat baru pada sistem SITEMAN-SURAT.
+                Anda menerima surat baru pada sistem SITEMAN-SUCA.
               </div>
             </td>
           </tr>
@@ -132,7 +132,7 @@
           <tr>
             <td style="padding:16px 28px 24px;">
               <div style="font:400 12px/1.6 'Segoe UI',Arial,sans-serif;color:#6b7280;margin-bottom:10px;">
-                Ini adalah pesan otomatis dari sistem SITEMAN-SURAT. Mohon jangan membalas email ini.
+                Ini adalah pesan otomatis dari sistem SITEMAN-SUCA. Mohon jangan membalas email ini.
               </div>
               <div style="font:400 12px/1.6 'Segoe UI',Arial,sans-serif;color:#6b7280;">
                 Butuh bantuan? Hubungi Bagian Persuratan:

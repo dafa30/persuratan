@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SITEMAN-SURAT</title>
+  <title>SITEMAN-SUCA</title>
 
   {{-- Bootstrap CSS (5.3.3) --}}
   <link href="{{ asset('library/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">

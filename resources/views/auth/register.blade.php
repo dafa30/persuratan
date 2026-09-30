@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Register - Sistem Persuratan MPR RI')
+@section('title', 'Register - SITEMAN-SUCA')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     <img src="{{ asset('mpr5.png') }}" alt="Logo MPR RI">
 </div>
 
-<h1 class="login-title">Register Siteman-Surat</h1>
+<h1 class="login-title">Register SITEMAN-SUCA</h1>
 <p class="login-subtitle">Majelis Permusyawaratan Rakyat Republik Indonesia</p>
 
 {{-- Modal sukses registrasi --}}
