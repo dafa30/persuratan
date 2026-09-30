@@ -4,7 +4,7 @@
 <div class="hero-section">
   <div class="container">
     <h1 class="hero-title">SITEMAN-SUCA</h1>
-    <p class="lead">Sistem Informasi Temu-Kembali Pengiriman Surat</p>
+    <p class="lead">Sistem Informasi Temu-Kembali Pengiriman Surat Dengan Caraka</p>
   </div>
 </div>
 
