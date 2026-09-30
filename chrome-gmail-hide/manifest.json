@@ -1,0 +1,13 @@
+{
+  "name": "Disable Persuratan MPR Reply Attachments",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Sembunyikan tombol lampiran di Gmail saat membalas notifikasi Persuratan MPR",
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
