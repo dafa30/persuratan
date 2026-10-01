@@ -22,6 +22,7 @@
     </div>
 </div>
 
+@auth
 @php
 // Mapping kategori ke label dan nama route
 $categories = [
@@ -78,4 +79,20 @@ $categories = [
     @endforeach
 </div>
 </div>
+@endauth
+
+@guest
+<div class="calendar-section">
+    <div class="container">
+        <div class="month-section">
+            <div class="letter-card">
+                <div class="letter-item text-center">
+                    <p>Silakan Login Untuk Melihat Surat</p>
+                    <a href="{{ route('login') }}" class="btn btn-primary mt-2">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endguest
 @endsection

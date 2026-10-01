@@ -41,7 +41,7 @@
                 <td>{{ $s->penerima_display }}</td>
                 <td>
                     @if($s->file_surat)
-                    <a href="{{ asset($s->file_surat) }}" class="btn btn-sm btn-info" target="_blank">Download</a>
+                    <a href="{{ route('surat.file', ['surat' => $s->id_surats]) }}" class="btn btn-sm btn-info" target="_blank">Download</a>
                     @else
                     <span class="text-muted">-</span>
                     @endif

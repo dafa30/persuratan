@@ -126,7 +126,7 @@
                     <div class="action-group">
                         @if(!empty($surat->file_surat))
                             {{-- Unduh --}}
-                            <a href="{{ asset($surat->file_surat) }}"
+                            <a href="{{ route('surat.file', ['surat' => $surat->id_surats]) }}"
                                class="action-btn btn-download" target="_blank" download aria-label="Unduh surat">
                                 <span class="btn-layer icon"><i class="bi bi-download"></i></span>
                                 <span class="btn-layer label">Unduh</span>

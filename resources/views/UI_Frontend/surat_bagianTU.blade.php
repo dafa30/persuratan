@@ -56,11 +56,9 @@
                     @endif
 
                 @else {{-- Jika pengguna belum login (guest) --}}
-                    <div class="letter-item">
-                        <a href="{{ route('login') }}">
-                            <i class="bi bi-envelope-paper" style="font-size:30px"></i>
-                        </a>
-                        <p class="letter-title">Surat Kategori Biasa</p>
+                    <div class="letter-item text-center">
+                        <p>Silakan Login Untuk Melihat Surat</p>
+                        <a href="{{ route('login') }}" class="btn btn-primary mt-2">Login</a>
                     </div>
                 @endauth
 

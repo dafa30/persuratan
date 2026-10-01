@@ -72,7 +72,7 @@
 
       @if(!empty($surat->file_surat))
         <small class="text-muted">
-          File saat ini: <a href="{{ asset($surat->file_surat) }}" target="_blank">{{ basename($surat->file_surat) }}</a>
+          File saat ini: <a href="{{ route('surat.file', ['surat' => $surat->id_surats]) }}" target="_blank">{{ basename($surat->file_surat) }}</a>
         </small>
       @endif
     </div>

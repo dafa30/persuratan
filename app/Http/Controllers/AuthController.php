@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -39,7 +41,20 @@ class AuthController extends Controller
             'password.mixed'    => 'Kata sandi harus mengandung huruf besar dan huruf kecil.',
         ]);
 
+        $throttleKey = 'login:' . hash('sha256', Str::lower($credentials['email']));
+        $lockoutKey = $throttleKey . ':lockout';
+
+        if (RateLimiter::tooManyAttempts($lockoutKey, 1)) {
+            $minutes = (int) ceil(RateLimiter::availableIn($lockoutKey) / 60);
+
+            return back()->withErrors([
+                'email' => "Akun ditangguhkan sementara. Coba lagi dalam {$minutes} menit.",
+            ])->onlyInput('email');
+        }
+
         if (Auth::attempt($credentials)) {
+            RateLimiter::clear($throttleKey);
+            RateLimiter::clear($lockoutKey);
             $request->session()->regenerate();
             $user = Auth::user();
 
@@ -70,6 +85,17 @@ class AuthController extends Controller
                     Auth::logout();
                     return back()->withErrors(['email' => 'Role tidak dikenali.']);
             }
+        }
+
+        RateLimiter::hit($throttleKey, 600);
+
+        if (RateLimiter::attempts($throttleKey) > 3) {
+            RateLimiter::hit($lockoutKey, 600);
+            RateLimiter::clear($throttleKey);
+
+            return back()
+            ->withErrors(['email' => 'Terlalu banyak percobaan login. Akun ditangguhkan selama 10 menit.'])
+            ->onlyInput('email');
         }
 
         return back()

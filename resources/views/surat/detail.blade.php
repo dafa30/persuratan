@@ -22,7 +22,7 @@
 
     <div class="mt-4">
         <h4>File Surat</h4>
-        <a href="{{ url('/storage/surats/'.$surat->file_surat) }}" class="btn btn-primary" target="_blank">Unduh Surat</a>
+        <a href="{{ route('surat.file', ['surat' => $surat->id_surats]) }}" class="btn btn-primary" target="_blank">Unduh Surat</a>
     </div>
 </div>
 @endsection

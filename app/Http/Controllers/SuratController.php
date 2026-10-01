@@ -31,6 +31,28 @@ class SuratController extends Controller
         return $this->hasRole(['sekretariat', 'user']);
     }
 
+    private function isConfidentialCategory(?string $category): bool
+    {
+        return in_array($category, ['rahasia', 'sangat_rahasia'], true);
+    }
+
+    private function suratStorageLocation(?string $storedPath): ?array
+    {
+        if (!$storedPath) {
+            return null;
+        }
+
+        if (Str::startsWith($storedPath, 'private/')) {
+            return ['local', Str::after($storedPath, 'private/')];
+        }
+
+        if (Str::startsWith($storedPath, 'storage/')) {
+            return ['public', Str::after($storedPath, 'storage/')];
+        }
+
+        return ['public', $storedPath];
+    }
+
     /**
          * Ambil nama role user login (lowercase) dengan berbagai fallback.
          */
@@ -307,6 +329,10 @@ class SuratController extends Controller
     {
         try {
             $surat = Surat::where('jenis_surat', $kategori)->findOrFail($id_surats);
+            if ($this->isConfidentialCategory($surat->kategori) && !auth()->check()) {
+                return redirect()->guest(route('login'));
+            }
+
             $pdfPath = null;
 
             if ($surat->file_surat) {
@@ -319,8 +345,8 @@ class SuratController extends Controller
                     \Log::warning("Format file_surat tidak terduga untuk surat ID {$surat->id_surats}: {$publicUrlPath}");
                 }
 
-                if ($storageDiskRelativePath && Storage::disk('public')->exists($storageDiskRelativePath)) {
-                    $pdfPath = asset($publicUrlPath);
+                if (($location = $this->suratStorageLocation($publicUrlPath)) && Storage::disk($location[0])->exists($location[1])) {
+                    $pdfPath = route('surat.file', ['surat' => $surat->getKey(), 'inline' => 1]);
                 } else {
                     \Log::error("File PDF tidak ditemukan di disk public untuk surat ID {$surat->id_surats}. Path yang dicari: 'public/{$storageDiskRelativePath}'. Nilai file_surat: '{$publicUrlPath}'");
                 }
@@ -335,6 +361,33 @@ class SuratController extends Controller
             return redirect()->route('surat.index')
                 ->with('error_message', 'Surat yang Anda cari tidak ditemukan.');
         }
+    }
+
+    public function downloadSuratFile(Request $request, Surat $surat, string $type = 'document')
+    {
+        abort_unless(in_array($type, ['document', 'receipt'], true), 404);
+
+        if ($this->isConfidentialCategory($surat->kategori) && !auth()->check()) {
+            return redirect()->guest(route('login'));
+        }
+
+        $storedPath = $type === 'receipt' ? $surat->file_bukti_terima : $surat->file_surat;
+        $location = $this->suratStorageLocation($storedPath);
+        abort_unless($location, 404);
+
+        [$disk, $relativePath] = $location;
+        abort_unless(Storage::disk($disk)->exists($relativePath), 404);
+
+        $originalName = $type === 'document' ? $surat->nama_file_asli : null;
+        $downloadName = $originalName
+            ? basename(str_replace('\\', '/', $originalName))
+            : basename($relativePath);
+
+        if ($request->boolean('inline')) {
+            return response()->file(Storage::disk($disk)->path($relativePath));
+        }
+
+        return Storage::disk($disk)->download($relativePath, $downloadName);
     }
 
     public function showDetail($id)
@@ -401,7 +454,7 @@ class SuratController extends Controller
             'judul_surat' => 'required|string|max:255',
             'nomor_surat' => 'required|string|max:255',
             'jenis_surat' => 'required|string',
-            'kategori'    => 'required|string',
+            'kategori'    => 'required|string|in:biasa,rahasia,sangat_rahasia',
             'file_surat'  => 'required|file|mimes:pdf,doc,docx,xlsx,xls|max:2048',
             'perihal'     => 'required|string',
         ];
@@ -480,7 +533,10 @@ class SuratController extends Controller
 
         // Baca dari pathname upload agar tidak bergantung pada realpath() PHP.
         $extension = $file->guessExtension();
-        $relativePath = 'surats/' . Str::random(40) . ($extension ? '.' . $extension : '');
+        $isConfidential = $this->isConfidentialCategory($validated['kategori']);
+        $disk = $isConfidential ? 'local' : 'public';
+        $directory = $isConfidential ? 'surat-private' : 'surats';
+        $relativePath = $directory . '/' . Str::random(40) . ($extension ? '.' . $extension : '');
         $stream = fopen($temporaryPath, 'rb');
 
         if ($stream === false) {
@@ -490,7 +546,7 @@ class SuratController extends Controller
         }
 
         try {
-            $stored = Storage::disk('public')->writeStream($relativePath, $stream);
+            $stored = Storage::disk($disk)->writeStream($relativePath, $stream);
         } catch (\Throwable $exception) {
             Log::error('Gagal menyimpan file surat', [
                 'error' => $exception->getMessage(),
@@ -509,7 +565,7 @@ class SuratController extends Controller
             ]);
         }
 
-        $filePath = 'storage/' . $relativePath;
+        $filePath = ($isConfidential ? 'private/' : 'storage/') . $relativePath;
 
         $namaFileAsli = basename(
             str_replace('\\', '/', $file->getClientOriginalName())
@@ -731,28 +787,11 @@ class SuratController extends Controller
     {
         $surat = Surat::findOrFail($id_surats);
 
-        // Hapus file surat jika ada
-        if ($surat->file_surat) {
-            // contoh: "storage/surats/abc.pdf" -> "surats/abc.pdf"
-            $publicUrlPath = $surat->file_surat;
-            $storageDiskRelativePath = Str::startsWith($publicUrlPath, 'storage/')
-                ? substr($publicUrlPath, strlen('storage/'))
-                : null;
-
-            if ($storageDiskRelativePath && \Storage::disk('public')->exists($storageDiskRelativePath)) {
-                \Storage::disk('public')->delete($storageDiskRelativePath);
-            }
-        }
-
-        // Hapus bukti foto jika ada
-        if ($surat->file_bukti_terima) {
-            $publicUrlPath = $surat->file_bukti_terima;
-            $storageDiskRelativePath = Str::startsWith($publicUrlPath, 'storage/')
-                ? substr($publicUrlPath, strlen('storage/'))
-                : null;
-
-            if ($storageDiskRelativePath && \Storage::disk('public')->exists($storageDiskRelativePath)) {
-                \Storage::disk('public')->delete($storageDiskRelativePath);
+        foreach ([$surat->file_surat, $surat->file_bukti_terima] as $storedPath) {
+            $location = $this->suratStorageLocation($storedPath);
+            if ($location) {
+                [$disk, $relativePath] = $location;
+                Storage::disk($disk)->delete($relativePath);
             }
         }
 
@@ -896,8 +935,8 @@ class SuratController extends Controller
                     \Log::warning("Format file_surat tidak terduga untuk surat ID {$surat->id_surats}: {$publicUrlPath}");
                 }
 
-                if ($storageDiskRelativePath && Storage::disk('public')->exists($storageDiskRelativePath)) {
-                    $pdfPath = asset($publicUrlPath);
+                if (($location = $this->suratStorageLocation($publicUrlPath)) && Storage::disk($location[0])->exists($location[1])) {
+                    $pdfPath = route('surat.file', ['surat' => $surat->getKey(), 'inline' => 1]);
                 } else {
                     \Log::error("File PDF tidak ditemukan di disk public untuk surat ID {$surat->id_surats}. Path yang dicari: 'public/{$storageDiskRelativePath}'. Nilai file_surat: '{$publicUrlPath}'");
                 }
@@ -936,8 +975,8 @@ class SuratController extends Controller
                     ? substr($publicUrlPath, strlen('storage/'))  // -> "surats/abc.pdf"
                     : null;
 
-                if ($storageDiskRelativePath && Storage::disk('public')->exists($storageDiskRelativePath)) {
-                    $pdfPath = asset($publicUrlPath);
+                if (($location = $this->suratStorageLocation($publicUrlPath)) && Storage::disk($location[0])->exists($location[1])) {
+                    $pdfPath = route('surat.file', ['surat' => $surat->getKey(), 'inline' => 1]);
                 } else {
                     \Log::error("File PDF tidak ditemukan di disk public untuk surat ID {$surat->id_surats}. Cari: 'public/{$storageDiskRelativePath}'. Nilai file_surat: '{$publicUrlPath}'");
                 }
@@ -992,8 +1031,8 @@ class SuratController extends Controller
                     \Log::warning("Format file_surat tidak terduga untuk surat ID {$surat->id_surats}: {$publicUrlPath}");
                 }
 
-                if ($storageDiskRelativePath && Storage::disk('public')->exists($storageDiskRelativePath)) {
-                    $pdfPath = asset($publicUrlPath);
+                if (($location = $this->suratStorageLocation($publicUrlPath)) && Storage::disk($location[0])->exists($location[1])) {
+                    $pdfPath = route('surat.file', ['surat' => $surat->getKey(), 'inline' => 1]);
                 } else {
                     \Log::error("File PDF tidak ditemukan di disk public untuk surat ID {$surat->id_surats}. Path yang dicari: 'public/{$storageDiskRelativePath}'. Nilai file_surat: '{$publicUrlPath}'");
                 }
@@ -1108,8 +1147,8 @@ class SuratController extends Controller
                 } else {
                     \Log::warning("Format file_surat tidak terduga untuk surat ID {$surat->id_surats}: {$publicUrlPath}");
                 }
-                if ($storageDiskRelativePath && Storage::disk('public')->exists($storageDiskRelativePath)) {
-                    $pdfPath = asset($publicUrlPath);
+                if (($location = $this->suratStorageLocation($publicUrlPath)) && Storage::disk($location[0])->exists($location[1])) {
+                    $pdfPath = route('surat.file', ['surat' => $surat->getKey(), 'inline' => 1]);
                 } else {
                     \Log::error("File PDF tidak ditemukan di disk public untuk surat ID {$surat->id_surats}. Path yang dicari: 'public/{$storageDiskRelativePath}'. Nilai file_surat: '{$publicUrlPath}'");
                 }
@@ -1283,19 +1322,16 @@ class SuratController extends Controller
             throw $e;
         }
 
+        $oldReceiptLocation = null;
+
         // Simpan file jika ada
         if ($request->hasFile('file_bukti_terima')) {
-            // hapus lama jika ada
-            if ($surat->file_bukti_terima) {
-                $old = Str::startsWith($surat->file_bukti_terima, 'storage/')
-                    ? Str::after($surat->file_bukti_terima, 'storage/')
-                    : $surat->file_bukti_terima;
-                if (Storage::disk('public')->exists($old)) {
-                    Storage::disk('public')->delete($old);
-                }
-            }
-            $path = $request->file('file_bukti_terima')->store('bukti_terima', 'public');
-            $surat->file_bukti_terima = 'storage/' . $path; // agar langsung bisa di-asset()
+            $oldReceiptLocation = $this->suratStorageLocation($surat->file_bukti_terima);
+            $isConfidential = $this->isConfidentialCategory($surat->kategori);
+            $disk = $isConfidential ? 'local' : 'public';
+            $directory = $isConfidential ? 'receipt-private' : 'bukti_terima';
+            $path = $request->file('file_bukti_terima')->store($directory, $disk);
+            $surat->file_bukti_terima = ($isConfidential ? 'private/' : 'storage/') . $path;
         }
 
         // Update status HANYA jika ada pada request
@@ -1304,6 +1340,11 @@ class SuratController extends Controller
         }
 
         $surat->save();
+
+        if ($oldReceiptLocation) {
+            [$oldDisk, $oldPath] = $oldReceiptLocation;
+            Storage::disk($oldDisk)->delete($oldPath);
+        }
 
         $success = 'Perubahan berhasil disimpan.';
 

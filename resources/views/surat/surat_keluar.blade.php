@@ -74,7 +74,7 @@
                         {{-- ✅ File surat --}}
                         <td>
                             @if($item->file_surat)
-                                <a href="{{ asset($item->file_surat) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('surat.file', ['surat' => $item->id_surats]) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-file-earmark-text"></i> Lihat
                                 </a>
                             @else
@@ -89,7 +89,7 @@
                             </a>
 
                             @if($item->file_bukti_terima)
-                                <a href="{{ asset($item->file_bukti_terima) }}" target="_blank" class="btn btn-success btn-sm">
+                                <a href="{{ route('surat.file', ['surat' => $item->id_surats, 'type' => 'receipt']) }}" target="_blank" class="btn btn-success btn-sm">
                                     <i class="bi bi-image"></i> Bukti
                                 </a>
                             @endif

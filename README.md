@@ -89,4 +89,6 @@ php artisan test
 
 - Jangan commit `.env`, kredensial, atau file surat yang diunggah.
 - Gunakan `APP_ENV=production` dan `APP_DEBUG=false` di lingkungan produksi.
+- Saat memperbarui instalasi yang sudah memiliki surat rahasia, jalankan `php artisan surat:protect-confidential-files --dry-run`, periksa hasilnya, lalu jalankan `php artisan surat:protect-confidential-files` sebelum aplikasi dibuka untuk pengguna. Perintah ini memindahkan dokumen dan bukti penerimaan rahasia dari disk publik ke disk privat; aman dijalankan ulang.
+- Cookie sesi otomatis menggunakan atribut `Secure` ketika `APP_ENV=production`. Untuk server HTTPS produksi, pastikan `SESSION_SECURE_COOKIE=true`; jangan mengaktifkannya pada server lokal HTTP.
 - Pastikan akses database, penyimpanan file, dan role pengguna sesuai kebijakan organisasi.

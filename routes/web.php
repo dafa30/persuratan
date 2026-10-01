@@ -63,7 +63,6 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ---------- Bagian TU (protected) ----------
-    Route::get('/surat_bagianTU',       [SuratController::class, 'surat_bagianTU'])->name('surat.bagianTU');
     Route::get('/surat_bagianTU_biasa', [SuratController::class, 'surat_bagianTU_biasa'])->name('surat.bagianTU_biasa');
 
     // Viewer (protected)
@@ -75,6 +74,29 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/lihat_surat_bagian_tu/{kategori}/{id_surats}',      [SuratController::class, 'lihat_surat_bagian_tu'])
         ->whereNumber('id_surats')->name('lihat.surat.bagian_tu');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/surat_ketua_mpr_rahasia', [SuratController::class, 'surat_ketua_mpr_rahasia'])
+        ->name('surat.ketuamprrahasia');
+    Route::get('/surat_ketua_mpr_sangat_rahasia', [SuratController::class, 'surat_ketua_mpr_sangat_rahasia'])
+        ->name('surat.ketuamprsangatrahasia');
+    Route::get('/surat/filterRahasia', [SuratController::class, 'surat_ketua_mpr_rahasia'])
+        ->name('surat.filterRahasia');
+    Route::get('/surat/filterSangatRahasia', [SuratController::class, 'surat_ketua_mpr_sangat_rahasia'])
+        ->name('surat.filterSangatRahasia');
+
+    Route::get('/surat_wakil_ketua_mpr_rahasia/{slug}', [SuratController::class, 'wakil_rahasia'])
+        ->name('surat.wakilketuamprrahasia');
+    Route::get('/surat_wakil_ketua_mpr_sangat_rahasia/{slug}', [SuratController::class, 'wakil_sangat_rahasia'])
+        ->name('surat.wakilketuamprsangatrahasia');
+
+    Route::get('/surat_bagianKearsipan_rahasia', [SuratController::class, 'surat_bagianKearsipan_rahasia'])
+        ->name('surat.bagianKearsipan_rahasia');
+    Route::get('/surat_bagianKearsipan_sangat_rahasia', [SuratController::class, 'surat_bagianKearsipan_sangat_rahasia'])
+        ->name('surat.bagianKearsipan_sangat_rahasia');
+    Route::get('/lihat_surat_bagianKearsipan/{kategori}/{id_surats}', [SuratController::class, 'lihat_surat_bagian_kearsipan'])
+        ->whereNumber('id_surats')->name('lihat.surat.bagian.kearsipan');
 });
 
 /*
@@ -89,16 +111,20 @@ Route::get('/surat/detail/{kategori}/{id_surats}', [SuratController::class, 'sho
     ->whereNumber('id_surats')
     ->name('surat.detailsurat');
 
+Route::get('/surat/{surat}/file/{type?}', [SuratController::class, 'downloadSuratFile'])
+    ->whereNumber('surat')
+    ->where('type', 'document|receipt')
+    ->name('surat.file');
+
 // (hapus mismatch) — rute di bawah disamakan ke showDetailsurat agar cocok 2 parameter
 Route::get('/surat/{kategori}/{id_surats}', [SuratController::class, 'showDetailsurat'])
     ->whereNumber('id_surats')
     ->name('surat.detail');
 
 // Ketua MPR
+Route::get('/surat_bagianTU', [SuratController::class, 'surat_bagianTU'])->name('surat.bagianTU');
 Route::get('/surat_ketua_mpr',                [SuratController::class, 'ketua_mpr'])->name('surat.ketuampr');
 Route::get('/surat_ketua_mpr_biasa',          [SuratController::class, 'surat_ketua_mpr_biasa'])->name('surat.ketuamprbiasa');
-Route::get('/surat_ketua_mpr_rahasia',        [SuratController::class, 'surat_ketua_mpr_rahasia'])->name('surat.ketuamprrahasia');
-Route::get('/surat_ketua_mpr_sangat_rahasia', [SuratController::class, 'surat_ketua_mpr_sangat_rahasia'])->name('surat.ketuamprsangatrahasia');
 
 // Wakil Ketua MPR — DISAMAKAN dengan controller (wakil, wakil_biasa, wakil_rahasia, wakil_sangat_rahasia)
 Route::pattern('slug', '[a-z0-9\-]+');
@@ -109,11 +135,6 @@ Route::get('/surat_wakil_ketua_mpr/{slug}',
 Route::get('/surat_wakil_ketua_mpr_biasa/{slug}',
     [SuratController::class, 'wakil_biasa'])->name('surat.wakilketuamprbiasa');
 
-Route::get('/surat_wakil_ketua_mpr_rahasia/{slug}',
-    [SuratController::class, 'wakil_rahasia'])->name('surat.wakilketuamprrahasia');
-
-Route::get('/surat_wakil_ketua_mpr_sangat_rahasia/{slug}',
-    [SuratController::class, 'wakil_sangat_rahasia'])->name('surat.wakilketuamprsangatrahasia');
 
 // (opsional) rute statis 1..8 untuk kompatibilitas lama (boleh dihapus jika tidak dipakai)
 Route::get('/surat_wakil_ketua_mpr1', [SuratController::class, 'surat_wakil_ketua_mpr1'])->name('surat.wakilketuampr1');
@@ -131,15 +152,9 @@ Route::get('/bagian_tu_pimpinan', [SuratController::class, 'showBagianTU'])->nam
 
 // Filter ketua MPR (alias)
 Route::get('/surat/filter',              [SuratController::class, 'surat_ketua_mpr_biasa'])->name('surat.filter');
-Route::get('/surat/filterRahasia',       [SuratController::class, 'surat_ketua_mpr_rahasia'])->name('surat.filterRahasia');
-Route::get('/surat/filterSangatRahasia', [SuratController::class, 'surat_ketua_mpr_sangat_rahasia'])->name('surat.filterSangatRahasia');
 
 // Bagian Kearsipan
 Route::get('/surat_bagianKearsipan',                        [SuratController::class, 'surat_bagianKearsipan'])->name('surat.bagianKearsipan');
 Route::get('/surat_bagianKearsipan_biasa',                  [SuratController::class, 'surat_bagianKearsipan_biasa'])->name('surat.bagianKearsipan_biasa');
-Route::get('/surat_bagianKearsipan_rahasia',                [SuratController::class, 'surat_bagianKearsipan_rahasia'])->name('surat.bagianKearsipan_rahasia');
-Route::get('/surat_bagianKearsipan_sangat_rahasia',         [SuratController::class, 'surat_bagianKearsipan_sangat_rahasia'])->name('surat.bagianKearsipan_sangat_rahasia');
-Route::get('/lihat_surat_bagianKearsipan/{kategori}/{id_surats}',  [SuratController::class, 'lihat_surat_bagian_kearsipan'])
-    ->whereNumber('id_surats')->name('lihat.surat.bagian.kearsipan');
 
 
