@@ -193,20 +193,46 @@ class SuratController extends Controller
         }
     }
 
-    public function index()
+    private function applyDashboardDateFilters(\Illuminate\Database\Eloquent\Builder $query, Request $request): \Illuminate\Database\Eloquent\Builder
+    {
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->input('year'));
+        }
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->input('month'));
+        }
+        if ($request->filled('day')) {
+            $query->whereDay('created_at', $request->input('day'));
+        }
+
+        return $query;
+    }
+
+    public function index(Request $request)
     {
         // Hanya admin yang boleh akses halaman index surat (dashboard)
         abort_unless($this->isAdmin(), 403);
 
-        $suratMasuk  = Surat::with(['user:id_users,name','penerima:id_users,name'])
-                            ->where('jenis_surat','masuk')
-                            ->latest()->get();
+        $years = Surat::query()
+            ->selectRaw('YEAR(created_at) as year')
+            ->whereNotNull('created_at')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
 
-        $suratKeluar = Surat::with(['user:id_users,name','penerima:id_users,name'])
-                            ->where('jenis_surat','keluar')
-                            ->latest()->get();
+        $suratMasukQuery = Surat::with(['user:id_users,name','penerima:id_users,name'])
+            ->where('jenis_surat', 'masuk');
+        $suratKeluarQuery = Surat::with(['user:id_users,name','penerima:id_users,name'])
+            ->where('jenis_surat', 'keluar');
 
-        return view('surat.index', compact('suratMasuk', 'suratKeluar'));
+        $suratMasuk = $this->applyDashboardDateFilters($suratMasukQuery, $request)
+            ->latest()
+            ->get();
+        $suratKeluar = $this->applyDashboardDateFilters($suratKeluarQuery, $request)
+            ->latest()
+            ->get();
+
+        return view('surat.index', compact('suratMasuk', 'suratKeluar', 'years'));
     }
 
     // ===== Wakil: mapping & helper =====
@@ -376,7 +402,7 @@ class SuratController extends Controller
             'nomor_surat' => 'required|string|max:255',
             'jenis_surat' => 'required|string',
             'kategori'    => 'required|string',
-            'file_surat'  => 'required|mimes:pdf,doc,docx,xlsx,xls|max:2048',
+            'file_surat'  => 'required|file|mimes:pdf,doc,docx,xlsx,xls|max:2048',
             'perihal'     => 'required|string',
         ];
 
@@ -388,6 +414,7 @@ class SuratController extends Controller
             'penerima_eksternal.required' => 'Nama penerima wajib diisi.',
             'file_surat.mimes'            => 'Hanya PDF, Word, atau Excel yang diperbolehkan.',
             'file_surat.max'              => 'Ukuran file maksimal 2 MB.',
+            'file_surat.uploaded'         => 'File gagal diunggah oleh server. Pastikan ukuran file sesuai batas dan coba pilih file kembali.',
         ];
 
         // 3) Tentukan rules spesifik per role
@@ -420,15 +447,73 @@ class SuratController extends Controller
 
         $validated = $request->validate($rules, $messages);
 
-        // 4) Upload file → simpan path publik (konsisten dg view)
+        // 4) Upload file
         $filePath = null;
         $namaFileAsli = null;
-        if ($request->hasFile('file_surat')) {
-            $file = $request->file('file_surat');
-            $path = $file->store('surats', 'public'); // "surats/abc.pdf"
-            $filePath = 'storage/' . $path;                                  // "storage/surats/abc.pdf"
-            $namaFileAsli = basename(str_replace('\\', '/', $file->getClientOriginalName()));
+
+        if (!$request->hasFile('file_surat')) {
+            return back()->withInput()->withErrors([
+                'file_surat' => 'File surat wajib diunggah.',
+            ]);
         }
+
+        $file = $request->file('file_surat');
+
+        if (!$file || !$file->isValid()) {
+            return back()->withInput()->withErrors([
+                'file_surat' => 'File surat gagal diunggah. Pilih file PDF, Word, atau Excel yang valid.',
+            ]);
+        }
+
+        $temporaryPath = $file->getPathname();
+        if (empty($temporaryPath) || !is_file($temporaryPath) || !is_readable($temporaryPath)) {
+            Log::warning('File temporary surat tidak dapat dibaca', [
+                'upload_error' => $file->getError(),
+                'temporary_path' => $temporaryPath,
+                'real_path' => $file->getRealPath(),
+            ]);
+
+            return back()->withInput()->withErrors([
+                'file_surat' => 'File sementara upload tidak tersedia atau tidak dapat dibaca oleh server. Silakan pilih ulang; jika berulang, administrator perlu memeriksa konfigurasi temporary upload PHP.',
+            ]);
+        }
+
+        // Baca dari pathname upload agar tidak bergantung pada realpath() PHP.
+        $extension = $file->guessExtension();
+        $relativePath = 'surats/' . Str::random(40) . ($extension ? '.' . $extension : '');
+        $stream = fopen($temporaryPath, 'rb');
+
+        if ($stream === false) {
+            return back()->withInput()->withErrors([
+                'file_surat' => 'File temporary upload tidak dapat dibuka oleh server. Silakan pilih file kembali.',
+            ]);
+        }
+
+        try {
+            $stored = Storage::disk('public')->writeStream($relativePath, $stream);
+        } catch (\Throwable $exception) {
+            Log::error('Gagal menyimpan file surat', [
+                'error' => $exception->getMessage(),
+            ]);
+
+            return back()->withInput()->withErrors([
+                'file_surat' => 'File tidak dapat disimpan di server. Silakan coba lagi atau hubungi administrator.',
+            ]);
+        } finally {
+            fclose($stream);
+        }
+
+        if (!$stored) {
+            return back()->withInput()->withErrors([
+                'file_surat' => 'File surat gagal disimpan ke server.',
+            ]);
+        }
+
+        $filePath = 'storage/' . $relativePath;
+
+        $namaFileAsli = basename(
+            str_replace('\\', '/', $file->getClientOriginalName())
+        );
 
         // 5) Siapkan data simpan
         if ($isCaraka) {

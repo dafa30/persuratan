@@ -3,6 +3,7 @@
 @section('content')
 <div class="container mt-4">
     <h2 class="mb-3">Data Surat Keluar</h2>
+    @include('components.surat-date-filter', ['years' => $years])
 
     <div class="table-responsive shadow-sm rounded">
         <table class="table table-bordered table-striped align-middle">

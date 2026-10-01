@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SITEMAN-SUCA</title>
+  <link rel="icon" type="image/png" href="{{ asset('logo1.png') }}">
 
   {{-- Bootstrap CSS (5.3.3) --}}
   <link href="{{ asset('library/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -14,6 +15,18 @@
   />
 
   <style>
+    :root {
+      --admin-ink: #151515;
+      --admin-gold: #d5aa45;
+      --admin-paper: #f5f6f7;
+      --admin-muted: #69717a;
+      --admin-line: #e7e9ec;
+    }
+
+    body {
+      background: var(--admin-paper);
+    }
+
     /* ====== Dropdown smooth animation (tanpa JS) ====== */
     .navbar .dropdown-menu {
       display: block;              /* biar bisa transisi saat hide */
@@ -41,7 +54,7 @@
     .flash-stack{
       position: fixed;
       right: 16px;
-      top: 72px;                  /* navbar fixed-top: sesuaikan jika tinggi navbar beda */
+      top: 142px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -54,6 +67,183 @@
       border-radius: 8px;
       box-shadow: 0 6px 18px rgba(0,0,0,.1);
       margin: 0;                  /* hilangkan margin default alert */
+    }
+    .flash-stack-standard {
+      top: 72px;
+    }
+
+    .admin-header {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      background: #fff;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, .08);
+    }
+    .admin-brandbar {
+      min-height: 76px;
+      background: #fff;
+    }
+    .admin-brandbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 76px;
+      gap: 20px;
+    }
+    .admin-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      color: var(--admin-ink);
+      text-decoration: none;
+    }
+    .admin-brand img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+    .admin-brand-copy {
+      display: grid;
+      gap: 2px;
+      line-height: 1.2;
+    }
+    .admin-brand-copy strong {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .admin-system-label {
+      color: var(--admin-muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .admin-nav {
+      min-height: 52px;
+      padding: 0;
+      background: var(--admin-ink) !important;
+    }
+    .admin-nav .navbar-nav {
+      align-items: center;
+      gap: 6px;
+    }
+    .admin-nav .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 52px;
+      padding: 0 14px !important;
+      color: rgba(255, 255, 255, .78) !important;
+      font-size: 14px;
+      transition: color .18s ease, background-color .18s ease;
+    }
+    .admin-nav .nav-link:hover,
+    .admin-nav .nav-link.active {
+      color: #fff !important;
+      background: rgba(255, 255, 255, .09);
+    }
+    .admin-nav .nav-link.active {
+      box-shadow: inset 0 -3px var(--admin-gold);
+    }
+    .admin-nav .nav-link i {
+      font-size: 16px;
+    }
+    .admin-nav .admin-user-toggle {
+      gap: 9px;
+      min-height: 40px;
+      margin: 6px 0;
+      padding: 0 12px !important;
+      border: 1px solid rgba(255, 255, 255, .24);
+      border-radius: 4px;
+      color: #fff !important;
+      background: rgba(255, 255, 255, .08);
+    }
+    .admin-user-toggle .bi-person-fill {
+      color: var(--admin-gold);
+      font-size: 18px;
+    }
+    .admin-user-name {
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .admin-nav .dropdown-menu {
+      min-width: 190px;
+      padding: 6px;
+      border: 1px solid var(--admin-line);
+      border-radius: 4px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .14);
+    }
+    .admin-nav .dropdown-item {
+      border-radius: 3px;
+      padding: 9px 10px;
+    }
+    .admin-nav .navbar-toggler {
+      margin: 8px 0;
+      border-color: rgba(255, 255, 255, .4);
+    }
+    .admin-nav .navbar-toggler-icon {
+      filter: invert(1);
+    }
+    .admin-main {
+      padding-top: 24px;
+      padding-bottom: 40px;
+    }
+    @media (max-width: 991.98px) {
+      .admin-nav .navbar-collapse {
+        padding-bottom: 8px;
+      }
+      .admin-nav .navbar-nav {
+        align-items: stretch;
+      }
+      .admin-nav .nav-link {
+        min-height: 44px;
+      }
+      .admin-nav .admin-user-toggle {
+        width: fit-content;
+      }
+      .admin-nav .dropdown-menu {
+        width: max-content;
+        min-width: 0;
+        max-width: calc(100vw - 24px);
+      }
+      .admin-nav .dropdown-menu form,
+      .admin-nav .dropdown-item {
+        width: max-content;
+      }
+    }
+    @media (max-width: 575.98px) {
+      .admin-brandbar,
+      .admin-brandbar-inner {
+        min-height: 64px;
+      }
+      .admin-brand img {
+        width: 40px;
+        height: 40px;
+      }
+      .admin-brand-copy strong {
+        font-size: 11px;
+      }
+      .admin-brand-copy small {
+        font-size: 9px;
+      }
+      .admin-system-label {
+        display: none;
+      }
+      .admin-main {
+        padding-top: 18px;
+      }
+      .flash-stack {
+        top: 126px;
+        right: 10px;
+        left: 10px;
+      }
+      .flash-stack .alert {
+        max-width: none;
+      }
     }
 
     /* ====== Style lain (tetap dari versi sebelumnya) ====== */
@@ -136,36 +326,87 @@
 </head>
 <body>
 
-  {{-- Navbar --}}
+  @php
+    $onAdminIndex = request()->routeIs('surat.index');
+    $onSettingRole = request()->routeIs('setting.role.*');
+    $showAdminNav = $onAdminIndex;
+  @endphp
+  @if($showAdminNav)
+  <header class="admin-header">
+    <div class="admin-brandbar">
+      <div class="container-fluid admin-brandbar-inner px-3 px-lg-4">
+        <a class="admin-brand" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
+          <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
+          <span class="admin-brand-copy">
+            <strong>MAJELIS PERMUSYAWARATAN RAKYAT<br>REPUBLIK INDONESIA</strong>
+          </span>
+        </a>
+        <span class="admin-system-label">Sistem Persuratan</span>
+      </div>
+    </div>
+    <nav class="navbar navbar-expand-lg admin-nav">
+      <div class="container-fluid px-3 px-lg-4">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Buka navigasi">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNavbar">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link {{ $onAdminIndex ? 'active' : '' }}" href="{{ route('surat.index') }}">
+                <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i> Dashboard
+              </a>
+            </li>
+            @auth
+              @if(($onAdminIndex || $onSettingRole) && auth()->user()->role_id === 1)
+                <li class="nav-item">
+                  <a class="nav-link {{ $onSettingRole ? 'active' : '' }}" href="{{ route('setting.role.index') }}">
+                    <i class="bi bi-people-fill" aria-hidden="true"></i> Pengaturan Pengguna
+                  </a>
+                </li>
+              @endif
+            @endauth
+          </ul>
+          <ul class="navbar-nav align-items-lg-center">
+            @auth
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle admin-user-toggle" href="#" id="adminUserMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-person-fill" aria-hidden="true"></i>
+                  <span class="admin-user-name">{{ auth()->user()->name }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserMenu">
+                  <li>
+                    <form action="{{ route('logout') }}" method="POST">
+                      @csrf
+                      <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</button>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+            @else
+              <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
+            @endauth
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  @else
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="{{ url('surat/dashboard') }}">Dashboard Surat</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <a class="navbar-brand" href="{{ route('surat.index') }}">Sistem Persuratan</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Buka navigasi">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          @php
-            $onAdminIndex  = request()->routeIs('surat.index');
-            $onSettingRole = request()->routeIs('setting.role.*');
-          @endphp
-
           @auth
-            @if(($onAdminIndex || $onSettingRole) && auth()->user()->role_id === 1)
+            @if($onSettingRole && auth()->user()->role_id === 1)
               <li class="nav-item">
-                <a class="nav-link {{ $onSettingRole ? 'active' : '' }}" href="{{ route('setting.role.index') }}">
-                  Pengaturan Pengguna
-                </a>
+                <a class="nav-link active" href="{{ route('setting.role.index') }}">Pengaturan Pengguna</a>
               </li>
             @endif
-          @endauth
-
-          {{-- Dropdown user --}}
-          @auth
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                 data-bs-toggle="dropdown" aria-expanded="false">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ auth()->user()->name }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -178,17 +419,16 @@
               </ul>
             </li>
           @else
-            <li class="nav-item">
-              <a class="nav-link" href="{{ route('login') }}">Login</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
           @endauth
         </ul>
       </div>
     </div>
   </nav>
+  @endif
 
   {{-- Flash alert stack (pojok kanan atas) --}}
-  <div class="flash-stack">
+  <div class="flash-stack {{ $showAdminNav ? '' : 'flash-stack-standard' }}">
     @php($flashSuccess = session()->pull('success'))
     @if($flashSuccess)
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -217,7 +457,11 @@
   </div>
 
   {{-- Main --}}
+  @if($showAdminNav)
+  <main class="container-fluid admin-main px-3 px-lg-4">
+  @else
   <main class="container mt-5 pt-3">
+  @endif
     @yield('content')
   </main>
 

@@ -42,6 +42,7 @@
     </form>
 
     {{-- Tabel Surat --}}
+    <div class="table-responsive surat-table-scroll">
     <table class="table table-bordered align-middle">
         <thead>
             <tr class="text-center">
@@ -141,6 +142,7 @@
         @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

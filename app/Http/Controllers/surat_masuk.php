@@ -7,10 +7,21 @@ use App\Models\Surat;
 
 class surat_masuk extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suratMasuk = Surat::where('jenis_surat', 'masuk')->get();
-        $data = Surat::all(); // Mengambil semua data
-        return view('surat.surat_masuk', ['data' => $suratMasuk]);
+        $query = Surat::where('jenis_surat', 'masuk');
+        $years = (clone $query)->selectRaw('YEAR(created_at) as year')
+            ->whereNotNull('created_at')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        if ($request->filled('year')) $query->whereYear('created_at', $request->input('year'));
+        if ($request->filled('month')) $query->whereMonth('created_at', $request->input('month'));
+        if ($request->filled('day')) $query->whereDay('created_at', $request->input('day'));
+
+        $data = $query->latest()->get();
+
+        return view('surat.surat_masuk', compact('data', 'years'));
     }
 }

@@ -70,6 +70,7 @@
     @endphp
 
     <h2>Daftar Surat Wakil Ketua MPR Biasa — {{ $wakilNama }}</h2>
+    @include('components.surat-date-filter', ['years' => $years])
 
     {{-- <form action="{{ request()->url() }}" method="GET" class="mb-4 row g-2">
         <div class="col-auto">
@@ -103,16 +104,15 @@
             </select>
         </div> --}}
 
-        <div class="col-auto d-flex gap-2">
+        <div class="d-flex gap-2 mb-4">
             @auth
                 <a href="{{ $isCaraka ? route('surat.create.caraka') : route('surat.create') }}" class="btn btn-primary">
                     {{ $isCaraka ? 'Tambah Surat (Caraka)' : 'Tambah Surat' }}
                 </a>
             @endauth
-            <!-- <button type="submit" class="btn btn-secondary">Filter</button> -->
         </div>
-    </form> 
 
+    <div class="table-responsive surat-table-scroll">
     <table class="table table-bordered align-middle">
         <thead>
             <tr class="text-center">
@@ -228,6 +228,7 @@
         @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

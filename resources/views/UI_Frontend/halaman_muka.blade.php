@@ -10,8 +10,8 @@
 </div>
 
 <!-- Tentang SITEMAN-SUCA -->
-<section class="py-5">
-  <div class="container content-section">
+<section class="about-section py-5">
+  <div class="container content-section" data-aos="fade-up" data-aos-duration="800">
     <h5 class="fw-bold">Tentang SITEMAN-SUCA</h5>
     <p> Sistem informasi ini digunakan untuk menyampaikan informasi pengiriman surat kepada Bagian Sekretariat Ketua (H. Ahmad Muzani), Bagian Sekretariat Wakil Ketua (Ir. Bambang Wuryanto, M.B.A.), Bagian Sekretariat Wakil Ketua (Drs. H. Kahar Muzakir), Bagian Sekretariat Wakil Ketua (Dr. Lestari Moerdijat, S.S., M.M.), Bagian Sekretariat Wakil Ketua (Rusdi Kirana, S.E.), Bagian Sekretariat Wakil Ketua (Dr. H. M. Hidayat Nur Wahid, MA.), Bagian Sekretariat Wakil Ketua (M. Eddy Dwiyanto Soeparno, S.H., M.H.), Bagian Sekretariat Wakil Ketua (Dr. Edhie Baskoro Yudhoyono, B.Com.), Bagian Sekretariat Wakil Ketua (Abcandra M.A Supratman, S.H.), serta Bagian Tata Usaha Pimpinan Sekretariat Jenderal untuk meningkatkan kualitas pelayanan surat-menyurat di Majelis Permusyawaratan Rakyat Republik Indonesia secara tepat, cepat, mudah, dan terjangkau.
         </p>
@@ -59,7 +59,8 @@
       @endphp
 
       <div class="col-md-3 mb-4 d-flex">
-        <a href="{{ $isLoggedIn ? $href : route('login') }}"
+          <a href="{{ $isLoggedIn ? $href : route('login') }}"
+            data-aos="zoom-in"
            class="card-custom w-100 text-decoration-none text-dark"
            onclick="{{ $isLoggedIn ? '' : 'alert(\'Silakan login terlebih dahulu!\');' }}">
           <img src="{{ asset($anggota['img']) }}" alt="{{ $anggota['nama'] }}">

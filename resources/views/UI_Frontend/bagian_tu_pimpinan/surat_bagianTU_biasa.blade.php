@@ -3,6 +3,7 @@
 
 <div class="container">
     <h2>Daftar Surat Bagian TU Pimpinan Setjen</h2>
+    @include('components.surat-date-filter', ['years' => $years])
 
     {{-- Form filter --}}
     {{-- <form action="{{ url()->current() }}" method="GET" class="mb-4 row g-2">
@@ -39,7 +40,7 @@
             </select>
         </div> --}}
 
-        <div class="col-auto d-flex gap-2">
+        <div class="d-flex gap-2 mb-4">
             @auth
                 @php
                     $roleName = strtolower(optional(auth()->user()->role)->nama_role ?? '');
@@ -49,9 +50,7 @@
                     {{ $isCarakaUser ? 'Tambah Surat (Caraka)' : 'Tambah Surat' }}
                 </a>
             @endauth
-            <!-- <button type="submit" class="btn btn-secondary">Filter</button> -->
         </div>
-    </form>
 
     @php
         // URL halaman ini + query sebagai 'back'
@@ -59,6 +58,7 @@
         $backHashNow = base64_encode($currentFullUrl);
     @endphp
 
+    <div class="table-responsive surat-table-scroll">
     <table class="table table-bordered align-middle">
         <thead>
             <tr class="text-center">
@@ -207,6 +207,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

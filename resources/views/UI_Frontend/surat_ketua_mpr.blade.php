@@ -11,7 +11,7 @@
 <div class="container my-4">
   <div class="row justify-content-center">
     <div class="col-md-4 d-flex">
-      <div class="card-custom w-100 text-center">
+    <div class="card-custom w-100 text-center" data-aos="zoom-in">
         <img src="{{ asset('anggota_mpr/ahmad_muzani.jpg') }}" alt="H. Ahmad Muzani">
         <div class="card-body">
           <h5 class="fw-bold card-title">Bagian Set. Ketua MPR</h5>
