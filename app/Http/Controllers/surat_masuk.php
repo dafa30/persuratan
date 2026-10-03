@@ -9,7 +9,8 @@ class surat_masuk extends Controller
 {
     public function index(Request $request)
     {
-        $query = Surat::where('jenis_surat', 'masuk');
+        $query = Surat::with(['user:id_users,name', 'penerima:id_users,name'])
+            ->where('jenis_surat', 'masuk');
         $years = (clone $query)->selectRaw('YEAR(created_at) as year')
             ->whereNotNull('created_at')
             ->distinct()

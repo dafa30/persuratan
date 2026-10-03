@@ -247,14 +247,10 @@ class SuratController extends Controller
         $suratKeluarQuery = Surat::with(['user:id_users,name','penerima:id_users,name'])
             ->where('jenis_surat', 'keluar');
 
-        $suratMasuk = $this->applyDashboardDateFilters($suratMasukQuery, $request)
-            ->latest()
-            ->get();
-        $suratKeluar = $this->applyDashboardDateFilters($suratKeluarQuery, $request)
-            ->latest()
-            ->get();
+        $suratMasukCount = $this->applyDashboardDateFilters($suratMasukQuery, $request)->count();
+        $suratKeluarCount = $this->applyDashboardDateFilters($suratKeluarQuery, $request)->count();
 
-        return view('surat.index', compact('suratMasuk', 'suratKeluar', 'years'));
+        return view('surat.dashboard', compact('suratMasukCount', 'suratKeluarCount', 'years'));
     }
 
     // ===== Wakil: mapping & helper =====

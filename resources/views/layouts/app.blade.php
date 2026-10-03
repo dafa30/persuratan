@@ -192,6 +192,81 @@
       padding-top: 24px;
       padding-bottom: 40px;
     }
+    .admin-sidebar {
+      --bs-offcanvas-width: 268px;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 1045;
+      display: flex;
+      flex-direction: column;
+      width: 268px;
+      height: 100vh;
+      border-right: 1px solid #e5e7eb;
+      background: #fff;
+      box-shadow: 5px 0 24px rgba(20, 28, 38, .045);
+    }
+    .admin-sidebar .offcanvas-body {
+      display: flex;
+      flex-direction: column;
+      padding: 0 14px 16px;
+    }
+    .admin-sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-height: 88px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #edf0f2;
+      color: var(--admin-ink);
+      text-decoration: none;
+    }
+    .admin-sidebar-brand img { width: 42px; height: 42px; object-fit: contain; }
+    .admin-sidebar-brand strong { display: block; font-size: 12px; line-height: 1.35; }
+    .admin-sidebar-brand small { display: block; margin-top: 3px; color: var(--admin-muted); font-size: 11px; }
+    .admin-sidebar-section-label {
+      margin: 23px 10px 8px;
+      color: #8a929b;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .admin-sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      margin: 2px 0;
+      padding: 0 12px;
+      border-left: 3px solid transparent;
+      border-radius: 3px;
+      color: #4f5964;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color .15s ease, background-color .15s ease;
+    }
+    .admin-sidebar-link i { width: 18px; color: #818a94; font-size: 16px; text-align: center; }
+    .admin-sidebar-link:hover,
+    .admin-sidebar-link.active {
+      border-left-color: var(--admin-gold);
+      color: #6e5113;
+      background: #f8f4e9;
+    }
+    .admin-sidebar-link.active i { color: #a17a24; }
+    .admin-sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid #edf0f2; }
+    .admin-sidebar-user { overflow: hidden; padding: 7px 10px 12px; color: #68717b; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .admin-sidebar-user i { margin-right: 7px; color: #a17a24; }
+    .admin-sidebar-logout { width: 100%; padding: 9px 12px; border: 0; border-radius: 3px; color: #8a3f3f; background: #fbf1f0; font-size: 13px; text-align: left; }
+    .admin-sidebar-logout:hover { color: #742d2d; background: #f6e5e3; }
+    .admin-mobile-header { position: sticky; top: 0; z-index: 1030; display: flex; align-items: center; justify-content: space-between; min-height: 62px; padding: 0 16px; border-bottom: 1px solid var(--admin-line); background: #fff; }
+    .admin-mobile-header .admin-sidebar-brand { min-height: 0; padding: 0; border: 0; }
+    .admin-mobile-header .admin-sidebar-brand img { width: 36px; height: 36px; }
+    .admin-mobile-trigger { display: inline-grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--admin-line); border-radius: 4px; color: #303740; background: #fff; font-size: 19px; }
+    .admin-main-sidebar { width: calc(100% - 268px); min-height: 100vh; margin-left: 268px; padding: 28px 30px 44px; }
+    @media (min-width: 992px) {
+      .admin-sidebar.offcanvas-lg { visibility: visible !important; transform: none !important; }
+    }
     @media (max-width: 991.98px) {
       .admin-nav .navbar-collapse {
         padding-bottom: 8px;
@@ -236,6 +311,8 @@
       .admin-main {
         padding-top: 18px;
       }
+      .admin-main-sidebar { width: 100%; min-height: calc(100vh - 62px); margin-left: 0; padding: 20px 16px 36px; }
+      .admin-sidebar { border: 0; box-shadow: 12px 0 30px rgba(15, 23, 42, .16); }
       .flash-stack {
         top: 126px;
         right: 10px;
@@ -259,6 +336,17 @@
     .timeline-body p + p { margin-top:5px; }
     .timeline-date { font-size:.85em; color:#777; }
     .pdf-viewer { width:100%; height:70vh; border:1px solid #ddd; }
+
+    .admin-list-page { max-width: 1600px; margin: 0 auto; color: #20252b; }
+    .admin-list-heading { margin-bottom: 18px; }
+    .admin-list-heading h1 { margin: 0; font-size: 24px; font-weight: 700; }
+    .admin-list-heading p { margin: 5px 0 0; color: var(--admin-muted); font-size: 13px; }
+    .admin-data-table { min-width: 1240px; margin: 0; border-color: #edf0f2; font-size: 13px; }
+    .admin-data-table thead th { padding: 11px 10px; border-bottom: 1px solid #e3e6e9; color: #606873; background: #f7f8f9; font-size: 10px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+    .admin-data-table tbody td { padding: 12px 10px; vertical-align: middle; }
+    .admin-data-table tbody tr { transition: background-color .15s ease; }
+    .admin-data-table tbody tr:hover { background: #faf8f2; }
+    .admin-data-table .badge { font-size: 11px; font-weight: 600; }
 
     /* Grup aksi: lebih rapat */
         .action-group{ display:inline-flex; gap:.35rem; }
@@ -328,68 +416,53 @@
 
   @php
     $onAdminIndex = request()->routeIs('surat.index');
+    $onIncoming = request()->routeIs('surat.masuk');
+    $onOutgoing = request()->routeIs('surat.keluar');
     $onSettingRole = request()->routeIs('setting.role.*');
-    $showAdminNav = $onAdminIndex;
+    $showAdminNav = auth()->check()
+      && auth()->user()->role_id === 1
+      && request()->routeIs('surat.index', 'surat.masuk', 'surat.keluar', 'setting.role.*');
   @endphp
   @if($showAdminNav)
-  <header class="admin-header">
-    <div class="admin-brandbar">
-      <div class="container-fluid admin-brandbar-inner px-3 px-lg-4">
-        <a class="admin-brand" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
-          <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
-          <span class="admin-brand-copy">
-            <strong>MAJELIS PERMUSYAWARATAN RAKYAT<br>REPUBLIK INDONESIA</strong>
-          </span>
-        </a>
-        <span class="admin-system-label">Sistem Persuratan</span>
+  <div class="admin-mobile-header d-lg-none">
+    <a class="admin-sidebar-brand" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
+      <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
+      <span><strong>SITEMAN-SUCA</strong><small>Sistem Persuratan</small></span>
+    </a>
+    <button class="admin-mobile-trigger" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" aria-controls="adminSidebar" aria-label="Buka menu">
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+  </div>
+  <aside class="offcanvas-lg offcanvas-start admin-sidebar" tabindex="-1" id="adminSidebar" aria-label="Navigasi dashboard">
+    <div class="offcanvas-header d-lg-none border-bottom">
+      <h2 class="offcanvas-title fs-6 mb-0">Navigasi</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#adminSidebar" aria-label="Tutup menu"></button>
+    </div>
+    <a class="admin-sidebar-brand d-none d-lg-flex" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
+      <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
+      <span><strong>MAJELIS PERMUSYAWARATAN RAKYAT<br>REPUBLIK INDONESIA</strong><small>Sistem Persuratan</small></span>
+    </a>
+    <div class="offcanvas-body">
+      <div class="admin-sidebar-section-label">Menu utama</div>
+      <nav aria-label="Menu utama">
+        <a class="admin-sidebar-link {{ $onAdminIndex ? 'active' : '' }}" href="{{ route('surat.index') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>Dashboard</a>
+        <a class="admin-sidebar-link {{ $onIncoming ? 'active' : '' }}" href="{{ route('surat.masuk') }}"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Surat Masuk</a>
+        <a class="admin-sidebar-link {{ $onOutgoing ? 'active' : '' }}" href="{{ route('surat.keluar') }}"><i class="bi bi-send-fill" aria-hidden="true"></i>Surat Keluar</a>
+        <a class="admin-sidebar-link" href="{{ route('surat.create') }}"><i class="bi bi-plus-square" aria-hidden="true"></i>Tambah Surat</a>
+      </nav>
+      <div class="admin-sidebar-section-label">Administrasi</div>
+      <nav aria-label="Administrasi">
+        <a class="admin-sidebar-link {{ $onSettingRole ? 'active' : '' }}" href="{{ route('setting.role.index') }}"><i class="bi bi-people-fill" aria-hidden="true"></i>Pengaturan Pengguna</a>
+      </nav>
+      <div class="admin-sidebar-bottom">
+        <div class="admin-sidebar-user"><i class="bi bi-person-circle" aria-hidden="true"></i>{{ auth()->user()->name }}</div>
+        <form action="{{ route('logout') }}" method="POST">
+          @csrf
+          <button type="submit" class="admin-sidebar-logout"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</button>
+        </form>
       </div>
     </div>
-    <nav class="navbar navbar-expand-lg admin-nav">
-      <div class="container-fluid px-3 px-lg-4">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Buka navigasi">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="adminNavbar">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link {{ $onAdminIndex ? 'active' : '' }}" href="{{ route('surat.index') }}">
-                <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i> Dashboard
-              </a>
-            </li>
-            @auth
-              @if(($onAdminIndex || $onSettingRole) && auth()->user()->role_id === 1)
-                <li class="nav-item">
-                  <a class="nav-link {{ $onSettingRole ? 'active' : '' }}" href="{{ route('setting.role.index') }}">
-                    <i class="bi bi-people-fill" aria-hidden="true"></i> Pengaturan Pengguna
-                  </a>
-                </li>
-              @endif
-            @endauth
-          </ul>
-          <ul class="navbar-nav align-items-lg-center">
-            @auth
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle admin-user-toggle" href="#" id="adminUserMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-person-fill" aria-hidden="true"></i>
-                  <span class="admin-user-name">{{ auth()->user()->name }}</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserMenu">
-                  <li>
-                    <form action="{{ route('logout') }}" method="POST">
-                      @csrf
-                      <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</button>
-                    </form>
-                  </li>
-                </ul>
-              </li>
-            @else
-              <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
-            @endauth
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </header>
+  </aside>
   @else
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container">
@@ -428,7 +501,7 @@
   @endif
 
   {{-- Flash alert stack (pojok kanan atas) --}}
-  <div class="flash-stack {{ $showAdminNav ? '' : 'flash-stack-standard' }}">
+  <div class="flash-stack {{ $showAdminNav ? 'flash-stack-admin' : 'flash-stack-standard' }}">
     @php($flashSuccess = session()->pull('success'))
     @if($flashSuccess)
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -458,7 +531,7 @@
 
   {{-- Main --}}
   @if($showAdminNav)
-  <main class="container-fluid admin-main px-3 px-lg-4">
+  <main class="container-fluid admin-main admin-main-sidebar">
   @else
   <main class="container mt-5 pt-3">
   @endif

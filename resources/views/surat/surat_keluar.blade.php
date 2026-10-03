@@ -1,105 +1,96 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h2 class="mb-3">Data Surat Keluar</h2>
+<div class="admin-list-page">
+    <div class="admin-list-heading">
+        <h1>Surat Keluar</h1>
+        <p>Daftar surat yang dikirim.</p>
+    </div>
     @include('components.surat-date-filter', ['years' => $years])
 
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-secondary text-center">
+    <div class="table-responsive bg-white border rounded-1 shadow-sm">
+        <table class="table align-middle admin-data-table">
+            <thead>
                 <tr>
-                    <th style="width:60px;">ID</th>
+                    <th>No</th>
+                    <th>Judul Surat</th>
                     <th>Nomor Surat</th>
                     <th>Jenis Surat</th>
+                    <th>Tanggal</th>
                     <th>Pengirim</th>
                     <th>Penerima</th>
+                    <th>Perihal</th>
                     <th>Kategori</th>
                     <th>Status</th>
-                    <th>Dikirim</th>
-                    <th>Dibaca</th>
-                    <th>File Surat</th>
-                    <th style="width:180px;">Aksi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
 
             <tbody>
-                @forelse ($data as $item)
+                @forelse ($data as $index => $item)
                     @php
-                        // ✅ Deteksi alur Caraka (pengirim manual / eksternal)
                         $isSuratCaraka = (strtolower($item->pengirim_nama ?? '') === 'caraka') || !empty($item->penerima_eksternal);
-
-                        // ✅ Tentukan URL edit otomatis
                         $editUrl = $isSuratCaraka
                             ? route('surat.edit.caraka', ['surat' => $item->id_surats])
-                            : route('surat.edit', ['id' => $item->id_surats]);
-
-                        // ✅ Warna badge kategori
-                        $kategoriClass = match(strtolower($item->kategori ?? '')) {
-                            'biasa' => 'badge bg-success',
-                            'rahasia' => 'badge bg-warning text-dark',
-                            'sangat_rahasia' => 'badge bg-danger',
-                            default => 'badge bg-secondary'
-                        };
-
-                        // ✅ Warna badge status
+                            : route('surat.edit', ['id_surats' => $item->id_surats]);
                         $statusClass = match(strtolower($item->status ?? '')) {
-                            'dikirim'  => 'badge bg-info text-dark',
-                            'dibaca'   => 'badge bg-primary',
+                            'dikirim' => 'badge bg-warning text-dark',
+                            'dibaca' => 'badge bg-primary',
                             'diterima' => 'badge bg-success',
                             'ditolak'  => 'badge bg-danger',
-                            default    => 'badge bg-secondary'
+                            default => 'badge bg-secondary',
                         };
                     @endphp
 
-                    <tr class="text-center">
-                        <td>{{ $item->id_surats }}</td>
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td>{{ $item->judul_surat ?? '-' }}</td>
                         <td>{{ $item->nomor_surat ?? '-' }}</td>
-                        <td>{{ ucfirst($item->jenis_surat ?? '-') }}</td>
-
-                        {{-- ✅ Nama pengirim & penerima dengan fallback --}}
-                        <td class="text-start">
-                            {{ $item->pengirim_display ?? optional($item->user)->name ?? '-' }}
-                        </td>
-                        <td class="text-start">
-                            {{ $item->penerima_display ?? optional($item->penerima)->name ?? $item->penerima_eksternal ?? '-' }}
-                        </td>
-
-                        <td><span class="{{ $kategoriClass }}">{{ ucfirst($item->kategori ?? '-') }}</span></td>
+                        <td><span class="badge rounded-pill text-bg-danger">{{ ucfirst($item->jenis_surat ?? '-') }}</span></td>
+                        <td>{{ $item->created_at ? $item->created_at->isoFormat('D MMMM Y') : '-' }}</td>
+                        <td>{{ $item->pengirim_display ?? optional($item->user)->name ?? '-' }}</td>
+                        <td>{{ $item->penerima_display ?? optional($item->penerima)->name ?? $item->penerima_eksternal ?? '-' }}</td>
+                        <td>{{ $item->perihal ?? '-' }}</td>
+                        <td>{{ ucwords(str_replace('_', ' ', $item->kategori ?? '-')) }}</td>
                         <td><span class="{{ $statusClass }}">{{ ucfirst($item->status ?? '-') }}</span></td>
-
-                        <td>{{ $item->created_at ? $item->created_at->isoFormat('D MMM Y, HH:mm') : '-' }}</td>
-                        <td>{{ $item->dibaca ? \Carbon\Carbon::parse($item->dibaca)->isoFormat('D MMM Y, HH:mm') : '-' }}</td>
-
-                        {{-- ✅ File surat --}}
-                        <td>
+                        <td class="text-nowrap">
+                            <div class="action-group">
                             @if($item->file_surat)
-                                <a href="{{ route('surat.file', ['surat' => $item->id_surats]) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-file-earmark-text"></i> Lihat
+                                <a href="{{ route('surat.file', ['surat' => $item->id_surats]) }}" class="action-btn btn-download" target="_blank" download aria-label="Unduh surat">
+                                    <span class="btn-layer icon"><i class="bi bi-download"></i></span>
+                                    <span class="btn-layer label">Unduh</span>
+                                </a>
+                                <a href="{{ route('surat.detailsurat', ['kategori' => $item->jenis_surat, 'id_surats' => $item->id_surats]) }}" class="action-btn btn-view" aria-label="Lihat tracking surat">
+                                    <span class="btn-layer icon"><i class="bi bi-eye"></i></span>
+                                    <span class="btn-layer label">Lihat</span>
                                 </a>
                             @else
-                                <span class="text-muted">Tidak ada</span>
+                                <span class="text-muted me-2">Tidak ada file</span>
                             @endif
-                        </td>
-
-                        {{-- ✅ Tombol Aksi --}}
-                        <td class="text-nowrap">
-                            <a href="{{ $editUrl }}" class="btn btn-warning btn-sm">
-                                <i class="bi bi-pencil-square"></i> {{ $isSuratCaraka ? 'Edit (Caraka)' : 'Edit' }}
+                            <a href="{{ $editUrl }}" class="action-btn btn-edit" aria-label="{{ $isSuratCaraka ? 'Unggah' : 'Edit' }}">
+                                <span class="btn-layer icon"><i class="bi {{ $isSuratCaraka ? 'bi-upload' : 'bi-pencil-square' }}"></i></span>
+                                <span class="btn-layer label">{{ $isSuratCaraka ? 'Unggah' : 'Edit' }}</span>
                             </a>
-
+                            <form action="{{ route('surat.destroy', $item->id_surats) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus surat ini?')" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="action-btn btn-delete" aria-label="Hapus surat">
+                                    <span class="btn-layer icon"><i class="bi bi-trash"></i></span>
+                                    <span class="btn-layer label">Hapus</span>
+                                </button>
+                            </form>
                             @if($item->file_bukti_terima)
-                                <a href="{{ route('surat.file', ['surat' => $item->id_surats, 'type' => 'receipt']) }}" target="_blank" class="btn btn-success btn-sm">
-                                    <i class="bi bi-image"></i> Bukti
+                                <a href="{{ route('surat.file', ['surat' => $item->id_surats, 'type' => 'receipt']) }}" class="action-btn btn-view" target="_blank" aria-label="Lihat bukti penerimaan">
+                                    <span class="btn-layer icon"><i class="bi bi-image"></i></span>
+                                    <span class="btn-layer label">Bukti</span>
                                 </a>
                             @endif
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11" class="text-center text-muted py-4">
-                            Tidak ada data surat keluar.
-                        </td>
+                        <td colspan="11" class="text-center text-muted py-4">Tidak ada data surat keluar.</td>
                     </tr>
                 @endforelse
             </tbody>
