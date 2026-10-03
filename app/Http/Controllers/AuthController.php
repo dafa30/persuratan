@@ -205,6 +205,8 @@ class AuthController extends Controller
     // 🔹 Hapus user
     public function destroy($id)
     {
+        abort_unless(auth()->user()?->role_id === 1, 403);
+
         $user = User::findOrFail($id);
         $user->delete();
 
