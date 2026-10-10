@@ -9,6 +9,21 @@ use Tests\TestCase;
 
 class SecurityControlsTest extends TestCase
 {
+    public function test_production_http_requests_are_redirected_to_https(): void
+    {
+        $this->app['env'] = 'production';
+
+        $this->get('/halaman_muka?source=lighthouse')
+            ->assertRedirect('https://persuratan.test/halaman_muka?source=lighthouse');
+    }
+
+    public function test_local_http_requests_are_not_redirected_to_https(): void
+    {
+        $this->app['env'] = 'local';
+
+        $this->get('/halaman_muka')->assertOk();
+    }
+
     public function test_anonymous_visitors_see_login_prompts_without_letter_categories(): void
     {
         foreach (['/surat_bagianTU', '/surat_bagianKearsipan'] as $path) {

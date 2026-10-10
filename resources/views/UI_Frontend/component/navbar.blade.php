@@ -1,22 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Navbar MPR</title>
-  <link rel="icon" type="image/png" href="{{ asset('logo1.png') }}">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-</head>
-
-<body>
   <!-- Header atas: identitas, pencarian, dan translate -->
   <div class="site-header">
     <div class="header-top container d-flex justify-content-between align-items-center">
       <div class="navbar-brand" aria-label="Identitas MPR">
-        <img src="{{ asset('logo1.png') }}" alt="Logo DPR RI">
+        <img src="{{ asset('logo1.webp') }}" alt="Logo DPR RI" width="164" height="142">
         <span>MAJELIS PERMUSYAWARATAN RAKYAT<br>REPUBLIK INDONESIA</span>
       </div>
 
@@ -35,14 +21,6 @@
           </form>
         @endauth
 
-        <div class="language-switcher">
-          <button class="translate-toggle" type="button" aria-label="Pilih bahasa" title="Pilih bahasa" aria-expanded="false">
-            <i class="bi bi-translate" aria-hidden="true"></i>
-          </button>
-          <div class="translate-panel" aria-hidden="true">
-            <div id="google_translate_element"></div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -122,6 +100,32 @@
 
   <!-- Mobile Slide Menu -->
   <div class="nav-slide" id="navMenu">
+    <div class="language-switcher">
+      <button class="translate-toggle" type="button" aria-label="Pilih bahasa" title="Pilih bahasa" aria-expanded="false">
+        <i class="bi bi-translate" aria-hidden="true"></i>
+        <span class="translate-label">Pilih bahasa</span>
+      </button>
+      <div class="translate-panel" aria-hidden="true">
+        <div id="google_translate_element"></div>
+      </div>
+    </div>
+
+    <div class="mobile-search">
+      <button class="search-toggle mobile-search-toggle" type="button" aria-label="Buka pencarian surat" aria-expanded="false">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <span>Cari surat</span>
+      </button>
+      <div class="search-panel">
+        <form action="{{ route('surat.search') }}" method="GET" class="d-flex gap-2">
+          <input type="search" name="q" value="{{ request('q') }}" class="form-control"
+                 placeholder="Cari surat..." aria-label="Kata kunci pencarian surat" required>
+          <button class="btn btn-outline-light" type="submit" aria-label="Cari surat">
+            <i class="bi bi-search" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
     <a href="{{ route('halaman_muka') }}">Halaman Muka</a>
     <a href="{{ route('surat.ketuampr') }}">Surat Ketua MPR</a>
 
@@ -145,22 +149,6 @@
 
     <a href="{{ route('surat.bagianTU') }}">Bagian TU Pimpinan</a>
     <a href="{{ route('surat.bagianKearsipan') }}">Bagian Persuratan dan Kearsipan</a>
-    @auth
-      <div class="mobile-search">
-        <button class="search-toggle mobile-search-toggle" type="button" aria-label="Buka pencarian surat" aria-expanded="false">
-          <i class="bi bi-search" aria-hidden="true"></i>
-        </button>
-        <div class="search-panel">
-          <form action="{{ route('surat.search') }}" method="GET" class="d-flex gap-2">
-            <input type="search" name="q" value="{{ request('q') }}" class="form-control"
-                   placeholder="Cari surat..." aria-label="Kata kunci pencarian surat" required>
-            <button class="btn btn-outline-light" type="submit" aria-label="Cari surat">
-              <i class="bi bi-search" aria-hidden="true"></i>
-            </button>
-          </form>
-        </div>
-      </div>
-    @endauth
   </div>
 
   <script>
@@ -209,6 +197,18 @@
         const isOpen = translateSwitcher.classList.toggle('is-open');
         translateToggle.setAttribute('aria-expanded', String(isOpen));
         translateSwitcher.querySelector('.translate-panel').setAttribute('aria-hidden', String(!isOpen));
+
+        if (isOpen && !window.googleTranslateScriptRequested) {
+          window.googleTranslateScriptRequested = true;
+          const translateScript = document.createElement('script');
+          translateScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+          translateScript.async = true;
+          translateScript.onerror = () => {
+            window.googleTranslateScriptRequested = false;
+            console.error('Google Translate failed to load.');
+          };
+          document.body.appendChild(translateScript);
+        }
       });
 
 
@@ -285,6 +285,3 @@
       }, 'google_translate_element');
     }
   </script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-</body>
-</html>

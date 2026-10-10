@@ -5,14 +5,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SITEMAN-SUCA</title>
-    <link rel="icon" type="image/png" href="{{ asset('logo1.png') }}">
+    <link rel="icon" type="image/webp" href="{{ asset('logo1.webp') }}">
+
+    @if (request()->routeIs('halaman_muka'))
+        <link rel="preload" as="image" href="{{ asset('mpr1.webp') }}"
+            imagesrcset="{{ asset('mpr1-mobile.webp') }} 900w, {{ asset('mpr1.webp') }} 1600w"
+            imagesizes="100vw" fetchpriority="high">
+    @endif
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
     <!-- Bootstrap & Icon -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap-icons/font/bootstrap-icons.min.css') }}">
+    <link rel="preload" as="style" href="https://unpkg.com/aos@2.3.4/dist/aos.css"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet"></noscript>
 
     <!-- Custom Style -->
     <style>
@@ -114,7 +121,7 @@
         }
 
         .navbar-brand span {
-            font-family: 'Work Sans', sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             font-size: 1.25rem;
             font-style: normal !important;
             font-weight: 700;
@@ -258,7 +265,7 @@
             width: 28px !important;
             height: 28px !important;
             margin-right: 6px !important;
-            background-image: url('{{ asset('logo1.png') }}') !important;
+            background-image: url('{{ asset('logo1.webp') }}') !important;
             background-size: contain !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
@@ -560,16 +567,18 @@
         .nav-slide {
             position: fixed;
             top: 0;
-            left: -100%;
-            width: 250px !important;
+            right: -100%;
+            left: auto;
+            width: min(320px, 86vw) !important;
             height: 100%;
             padding: 5rem 1rem;
             background-color: rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             gap: 20px;
-            transition: left 0.3s ease-in-out;
+            transition: right 0.3s ease-in-out;
             z-index: 1000;
+            box-shadow: -12px 0 28px rgba(0, 0, 0, .24);
 
             /* scroll vertikal */
             overflow-y: auto;
@@ -581,7 +590,7 @@
 
 
         .nav-slide.show {
-            left: 0;
+            right: 0;
         }
 
         /* Sidebar menu spacing & style */
@@ -671,16 +680,19 @@
 
             .navbar-brand {
                 gap: 8px;
-                margin-left: 45px;
+                margin-left: 0;
+                margin-right: auto;
+                max-width: calc(100% - 54px);
                 min-width: 0;
                 font-size: .65rem;
                 line-height: 1.25;
             }
 
             .navbar-brand span {
-                overflow: hidden;
-                font-size: .58rem;
-                text-overflow: ellipsis;
+                overflow: visible;
+                font-size: .54rem;
+                text-overflow: clip;
+                white-space: normal;
             }
 
             .navbar-brand img {
@@ -719,7 +731,33 @@
 
             .top-bar-fixed {
                 top: 30px;
-                left: 16px;
+                right: 16px;
+                left: auto;
+            }
+
+            .burger {
+                margin-right: 0;
+            }
+
+            .nav-slide .language-switcher {
+                width: 100%;
+                margin: 0;
+            }
+
+            .nav-slide .translate-toggle {
+                width: 100%;
+                height: 44px;
+                justify-content: flex-start;
+                gap: 10px;
+                padding: 10px 5px;
+                color: #fff;
+                font-size: 1rem;
+            }
+
+            .nav-slide .translate-panel {
+                right: auto;
+                left: 0;
+                width: min(260px, calc(100vw - 48px));
             }
 
             .hero-section h1 {
@@ -743,20 +781,50 @@
 
         @media (min-width: 769px) {
             .nav-slide {
+                display: contents !important;
+            }
+
+            .nav-slide > a,
+            .nav-slide > .dropdown-mobile,
+            .nav-slide > .mobile-search {
                 display: none !important;
+            }
+
+            .nav-slide .language-switcher {
+                position: fixed;
+                top: 44px;
+                right: max(24px, calc((100vw - 1320px) / 2));
+                z-index: 1100;
+                margin: 0;
+            }
+
+            .nav-slide .translate-label {
+                display: none;
             }
         }
 
         .hero-section {
-            background-image: url("{{ asset('mpr1.jpg') }}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
             background-color: #000;
             color: #fff;
             text-align: center;
             padding: 80px 0;
             margin-top: 0;
+        }
+
+        .hero-section .hero-background {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .hero-section > .container {
+            position: relative;
+            z-index: 1;
         }
 
         .hero-section h1 {
@@ -773,6 +841,59 @@
             font-size: 20px;
             font-weight: bold;
             margin-top: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                display: flex;
+                align-items: center;
+                min-height: clamp(280px, 45svh, 360px);
+                padding: 36px 12px;
+            }
+
+            .hero-section h1 {
+                width: 100%;
+                margin: 0;
+                font-size: clamp(1.6rem, 7.8vw, 2.4rem);
+                line-height: 1.2;
+                white-space: normal;
+                top: 0;
+            }
+
+            .hero-section p {
+                max-width: 35ch;
+                margin: 1.25rem auto 0;
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+            .about-section .content-section p {
+                font-size: 1rem;
+                line-height: 1.7;
+                text-align: left;
+            }
+
+            .row.text-center > .col-md-3 {
+                width: 50%;
+            }
+
+            .card-custom {
+                min-height: 250px;
+                padding: 16px 12px;
+            }
+
+            .card-custom img {
+                width: 88px;
+                height: 88px;
+            }
+
+            .card-custom .card-title {
+                font-size: .95rem;
+            }
+
+            .card-custom .card-subtitle {
+                font-size: .78rem;
+            }
         }
 
         .content-section p {
@@ -1101,7 +1222,8 @@
         .top-bar-fixed {
             position: fixed;
             top: 42px;
-            left: 24px;
+            right: 16px;
+            left: auto;
             display: flex;
             align-items: center;
             gap: 15px;
