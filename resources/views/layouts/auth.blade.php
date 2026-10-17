@@ -328,7 +328,8 @@
       if (!btn) return;
       btn.disabled = true;
       btn.querySelector('.spinner-border')?.classList.remove('d-none');
-      btn.querySelector('.btn-text')?.textContent = 'Memproses...';
+      const btnText = btn.querySelector('.btn-text');
+      if (btnText) btnText.textContent = 'Memproses...';
     });
 
     // (Opsional) Tampilkan/ sembunyikan password jika kamu punya checkbox #showPasswordCheck

@@ -71,7 +71,7 @@
 
           <!-- Login / User Dropdown -->
           @auth
-            <li class="nav-item dropdown ms-3">
+            <li class="nav-item dropdown ms-3 position-relative">
                 <a class="nav-link dropdown-toggle user-menu-toggle" href="#" data-bs-toggle="dropdown"
                   data-bs-display="static" aria-expanded="false" aria-label="Menu pengguna" title="Menu pengguna">
                 <i class="bi bi-person-circle" aria-hidden="true"></i>
@@ -149,6 +149,24 @@
 
     <a href="{{ route('surat.bagianTU') }}">Bagian TU Pimpinan</a>
     <a href="{{ route('surat.bagianKearsipan') }}">Bagian Persuratan dan Kearsipan</a>
+
+    @auth
+      <div class="dropdown-mobile mobile-user">
+        <a href="#" aria-label="Menu pengguna"
+           onclick="event.preventDefault(); this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show');">
+          <span><i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ Auth::user()->name }}</span>
+          <span class="chevron">▾</span>
+        </a>
+        <div class="submenu-mobile">
+          <form action="{{ route('logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="mobile-logout-btn">
+              <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
+            </button>
+          </form>
+        </div>
+      </div>
+    @endauth
   </div>
 
   <script>
@@ -211,44 +229,6 @@
         }
       });
 
-
-    const userMenuToggle = document.querySelector('.user-menu-toggle');
-
-    if (userMenuToggle) {
-      const userDropdown = userMenuToggle.closest('.dropdown');
-      const userMenu = userDropdown.querySelector('.dropdown-menu');
-
-      const positionUserMenu = () => {
-        if (!userMenu.classList.contains('show')) {
-          return;
-        }
-
-        const toggleRect = userMenuToggle.getBoundingClientRect();
-        const menuWidth = Math.min(140, window.innerWidth - 24);
-        const right = Math.max(12, window.innerWidth - toggleRect.right + 48);
-
-        userMenu.classList.add('user-menu-fixed');
-        userMenu.style.right = `${right}px`;
-        userMenu.style.width = `${menuWidth}px`;
-
-        const menuHeight = userMenu.offsetHeight;
-        const spaceBelow = window.innerHeight - toggleRect.bottom - 8;
-        const top = spaceBelow >= menuHeight
-          ? toggleRect.bottom + 8
-          : Math.max(12, toggleRect.top - menuHeight - 8);
-
-        userMenu.style.top = `${top}px`;
-      };
-
-      userDropdown.addEventListener('shown.bs.dropdown', positionUserMenu);
-      window.addEventListener('resize', positionUserMenu);
-      window.addEventListener('scroll', positionUserMenu, true);
-
-      userDropdown.addEventListener('hidden.bs.dropdown', () => {
-        userMenu.classList.remove('user-menu-fixed');
-        userMenu.removeAttribute('style');
-      });
-    }
       document.addEventListener('click', (event) => {
         if (!translateSwitcher.contains(event.target)) {
           translateSwitcher.classList.remove('is-open');

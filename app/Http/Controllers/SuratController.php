@@ -1326,7 +1326,30 @@ class SuratController extends Controller
             $isConfidential = $this->isConfidentialCategory($surat->kategori);
             $disk = $isConfidential ? 'local' : 'public';
             $directory = $isConfidential ? 'receipt-private' : 'bukti_terima';
-            $path = $request->file('file_bukti_terima')->store($directory, $disk);
+            $receipt = $request->file('file_bukti_terima');
+            $extension = $receipt->guessExtension() ?: $receipt->getClientOriginalExtension();
+            $path = $directory . '/' . Str::random(40) . ($extension ? '.' . $extension : '');
+
+            // Baca dari pathname upload agar tidak bergantung pada realpath() PHP.
+            $stream = is_readable($receipt->getPathname()) ? fopen($receipt->getPathname(), 'rb') : false;
+            if ($stream === false) {
+                return back()->withErrors([
+                    'file_bukti_terima' => 'File sementara upload tidak dapat dibaca oleh server. Silakan pilih file kembali.',
+                ]);
+            }
+
+            try {
+                $stored = Storage::disk($disk)->writeStream($path, $stream);
+            } finally {
+                fclose($stream);
+            }
+
+            if (!$stored) {
+                return back()->withErrors([
+                    'file_bukti_terima' => 'Gambar bukti gagal disimpan ke server.',
+                ]);
+            }
+
             $surat->file_bukti_terima = ($isConfidential ? 'private/' : 'storage/') . $path;
         }
 

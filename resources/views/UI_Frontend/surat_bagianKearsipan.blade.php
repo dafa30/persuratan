@@ -1,11 +1,15 @@
 @extends('UI_Frontend.index')
 
 @section('content')
+<!-- Hero Section -->
 <div class="hero-section">
-    <div class="container">
-        <h1>SITEMAN-SUCA</h1>
-        <p class="lead">Sistem Informasi Temu-Kembali Pengiriman Surat Dengan Caraka</p>
-    </div>
+  <img class="hero-background" src="{{ asset('mpr1.webp') }}" alt=""
+    srcset="{{ asset('mpr1-mobile.webp') }} 900w, {{ asset('mpr1.webp') }} 1600w"
+    sizes="100vw" width="1600" height="839" fetchpriority="high" aria-hidden="true">
+  <div class="container">
+    <h1>SITEMAN-SUCA</h1>
+    <p class="lead">Sistem Informasi Temu-Kembali Pengiriman Surat Dengan Caraka</p>
+  </div>
 </div>
 
 <div class="container my-4">

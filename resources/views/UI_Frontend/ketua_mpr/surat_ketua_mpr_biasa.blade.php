@@ -23,34 +23,6 @@
         $isCaraka = ($roleName === 'caraka');
     @endphp
 
-   {{-- <form action="{{ route('surat.filter') }}" method="GET" class="mb-4 row g-2">
-        <div class="col-auto">
-            <select name="year" class="form-select">
-                <option value="">Pilih Tahun</option>
-                @foreach($years as $year)
-                    <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>{{ $year }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-auto">
-            <select name="month" class="form-select">
-                <option value="">Pilih Bulan</option>
-                @foreach(range(1,12) as $m)
-                    <option value="{{ $m }}" {{ (int)request('month') === $m ? 'selected' : '' }}>{{ $bulanIndo[$m] }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="col-auto">
-            <select name="day" class="form-select">
-                <option value="">Pilih Tanggal</option>
-                @foreach(range(1,31) as $d)
-                    <option value="{{ $d }}" {{ (int)request('day') === $d ? 'selected' : '' }}>{{ $d }}</option>
-                @endforeach
-            </select>
-        </div> --}}
-
         <div class="d-flex gap-2 mb-4">
             @auth
                 <a href="{{ $isCaraka ? route('surat.create.caraka') : route('surat.create') }}" class="btn btn-primary">

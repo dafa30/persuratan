@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
     <!-- Bootstrap & Icon -->
-    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/bootstrap.min.css') }}?v=5.3.0">
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap-icons/font/bootstrap-icons.min.css') }}">
     <link rel="preload" as="style" href="https://unpkg.com/aos@2.3.4/dist/aos.css"
         onload="this.onload=null;this.rel='stylesheet'">
@@ -147,12 +147,12 @@
         }
 
         .navbar-search-form {
-            width: min(780px, 100%);
-            height: 62px;
+            width: min(380px, 100%);
+            height: 42px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 0 16px 0 24px;
+            gap: 4px;
+            padding: 0 8px 0 18px;
             border: 1px solid #f5a623;
             border-radius: 999px;
             background: #fff;
@@ -165,7 +165,14 @@
             outline: 0;
             color: #333;
             font-family: inherit;
-            font-size: 1rem;
+            font-size: .9rem;
+        }
+
+        .navbar-search-form .clear-search,
+        .navbar-search-form .submit-search {
+            width: 32px;
+            height: 32px;
+            font-size: 1.05rem;
         }
 
         .navbar-search-form input::placeholder {
@@ -414,46 +421,29 @@
         }
 
         .user-menu-toggle + .dropdown-menu {
-            right: auto;
+            position: absolute;
+            top: 100%;
+            right: 0;
             left: auto;
-            min-width: 140px !important;
-            width: 140px !important;
-            max-width: 140px !important;
-        }
-
-        .user-menu-fixed {
-            position: fixed !important;
-            z-index: 9999 !important;
-            margin: 0 !important;
-            min-width: 140px !important;
-            width: 140px !important;
-            max-width: 140px !important;
-            overflow: visible !important;
+            margin-top: 8px;
+            min-width: 100% !important;
+            width: 100%;
+            padding: .35rem;
             border: 1px solid rgba(0, 0, 0, .18);
+            border-radius: 12px;
             box-shadow: 0 8px 18px rgba(0, 0, 0, .2);
+            z-index: 9999;
         }
 
-        .user-menu-fixed .dropdown-item-text {
-            display: block !important;
-            overflow: visible !important;
-            white-space: nowrap !important;
-            text-overflow: clip !important;
-            width: max-content !important;
-            max-width: none !important;
-            font-size: 1rem !important;
-            line-height: 1.3;
-            padding: .65rem 1rem;
-            padding-right: 20px !important;
+        .user-menu-toggle + .dropdown-menu form {
+            margin: 0;
+            padding: 0 !important;
         }
 
-        .user-menu-fixed form {
+        .user-menu-toggle + .dropdown-menu form .btn {
             width: 100%;
-            padding-left: .75rem !important;
-            padding-right: .75rem !important;
-        }
-
-        .user-menu-fixed form .btn {
-            width: 100%;
+            font-weight: 600;
+            text-align: center;
         }
 
         .navbar-nav .nav-link.active,
@@ -654,6 +644,23 @@
             color: #ccc;
         }
 
+        .mobile-logout-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border: 0;
+            background: transparent;
+            color: #ff8a8a;
+            font-size: .95rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .mobile-logout-btn:hover {
+            color: #ffb3b3;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding-top: 82px;
@@ -725,6 +732,11 @@
 
             .nav-slide {
                 top: 82px;
+                height: calc(100vh - 82px);
+                height: calc(100dvh - 82px);
+                padding-top: 1.25rem;
+                padding-bottom: 2rem;
+                gap: 14px;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
             }
@@ -786,7 +798,8 @@
 
             .nav-slide > a,
             .nav-slide > .dropdown-mobile,
-            .nav-slide > .mobile-search {
+            .nav-slide > .mobile-search,
+            .nav-slide > .mobile-user {
                 display: none !important;
             }
 
