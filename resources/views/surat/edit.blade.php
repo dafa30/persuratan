@@ -1,87 +1,88 @@
 @extends('layouts.app')
 
+@section('no_navbar', '')
+
+@push('styles')
+  @include('surat.partials.modern-style')
+@endpush
+
 @section('content')
-<div class="container mt-4">
-  <h2>Edit Surat</h2>
+@php $backTo = $backUrl ?? url()->previous(); @endphp
+<div class="sx-wrap">
+  <a class="sx-brand" href="{{ $backTo }}" aria-label="Kembali">
+    <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
+    <span><strong>SITEMAN-SUCA</strong><small>Sekretariat Jenderal MPR RI</small></span>
+  </a>
 
-  {{-- gunakan id_surats untuk primary key --}}
-  <form id="formEditSurat" action="{{ route('surat.update', $surat->id_surats) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
-
-    {{-- alamat asal (base64) dikirim ke controller --}}
-    <input type="hidden" name="back" value="{{ $backHash ?? base64_encode(url()->previous()) }}">
-
-    {{-- Judul --}}
-    <div class="mb-3">
-      <label for="judul_surat" class="form-label">Judul Surat <span class="text-danger">*</span></label>
-      <input type="text" id="judul_surat" name="judul_surat"
-        class="form-control @error('judul_surat') is-invalid @enderror"
-        value="{{ old('judul_surat', $surat->judul_surat) }}" required
-        oninvalid="this.setCustomValidity('Kolom tidak boleh kosong')"
-        oninput="this.setCustomValidity('')">
-      @error('judul_surat') <div class="invalid-feedback">{{ $message }}</div> @enderror
+  <div class="sx-card">
+    <div class="sx-card-head">
+      <span class="sx-card-icon"><i class="bi bi-pencil-square" aria-hidden="true"></i></span>
+      <div>
+        <h1>Edit Surat</h1>
+        <p>Perbarui judul, nomor, atau ganti dokumen surat.</p>
+      </div>
     </div>
 
-    {{-- Nomor --}}
-    <div class="mb-3">
-      <label for="nomor_surat" class="form-label">Nomor Surat <span class="text-danger">*</span></label>
-      <input type="text" id="nomor_surat" name="nomor_surat"
-        class="form-control @error('nomor_surat') is-invalid @enderror"
-        value="{{ old('nomor_surat', $surat->nomor_surat) }}" required
-        oninvalid="this.setCustomValidity('Kolom tidak boleh kosong')"
-        oninput="this.setCustomValidity('')">
-      @error('nomor_surat') <div class="invalid-feedback">{{ $message }}</div> @enderror
-    </div>
+    <div class="sx-card-body">
+      <form id="formEditSurat" action="{{ route('surat.update', $surat->id_surats) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-    {{-- Info lain (non-editable) --}}
-    <div class="mb-3">
-      <label class="form-label">Jenis Surat</label>
-      <input type="text" class="form-control" value="{{ ucfirst($surat->jenis_surat) }}" disabled readonly>
-    </div>
+        <input type="hidden" name="back" value="{{ $backHash ?? base64_encode(url()->previous()) }}">
 
-    <div class="mb-3">
-      <label class="form-label">Kategori</label>
-      <input type="text" class="form-control" value="{{ ucfirst($surat->kategori) }}" disabled readonly>
-    </div>
+        <h2 class="sx-section">Ringkasan Surat</h2>
+        <div class="sx-meta">
+          <div class="sx-chip"><span>Jenis</span><strong>{{ ucfirst($surat->jenis_surat) }}</strong></div>
+          <div class="sx-chip"><span>Kategori</span><strong>{{ ucfirst(str_replace('_', ' ', $surat->kategori)) }}</strong></div>
+          <div class="sx-chip"><span>Pengirim</span><strong>{{ optional($surat->user)->name ?? $surat->pengirim_nama ?? '-' }}</strong></div>
+          <div class="sx-chip"><span>Penerima</span><strong>{{ optional($surat->penerima)->name ?? $surat->penerima_eksternal ?? '-' }}</strong></div>
+          <div class="sx-chip" style="grid-column: 1 / -1;"><span>Perihal</span><strong>{{ $surat->perihal ?: '-' }}</strong></div>
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Perihal</label>
-      <input type="text" class="form-control" value="{{ $surat->perihal }}" disabled readonly>
-    </div>
+        <h2 class="sx-section">Data yang Dapat Diubah</h2>
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="judul_surat" class="form-label">Judul Surat <span class="text-danger">*</span></label>
+            <input type="text" id="judul_surat" name="judul_surat"
+              class="form-control @error('judul_surat') is-invalid @enderror"
+              value="{{ old('judul_surat', $surat->judul_surat) }}" required
+              oninvalid="this.setCustomValidity('Kolom tidak boleh kosong')"
+              oninput="this.setCustomValidity('')">
+            @error('judul_surat') <div class="invalid-feedback">{{ $message }}</div> @enderror
+          </div>
 
-    <div class="mb-3">
-      <label class="form-label">Pengirim</label>
-      <input type="text" class="form-control" 
-        value="{{ optional($surat->user)->name ?? $surat->pengirim_nama ?? '-' }}" disabled readonly>
-    </div>
+          <div class="col-12">
+            <label for="nomor_surat" class="form-label">Nomor Surat <span class="text-danger">*</span></label>
+            <input type="text" id="nomor_surat" name="nomor_surat"
+              class="form-control @error('nomor_surat') is-invalid @enderror"
+              value="{{ old('nomor_surat', $surat->nomor_surat) }}" required
+              oninvalid="this.setCustomValidity('Kolom tidak boleh kosong')"
+              oninput="this.setCustomValidity('')">
+            @error('nomor_surat') <div class="invalid-feedback">{{ $message }}</div> @enderror
+          </div>
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Penerima</label>
-      <input type="text" class="form-control"
-        value="{{ optional($surat->penerima)->name ?? $surat->penerima_eksternal ?? '-' }}" disabled readonly>
-    </div>
+        <h2 class="sx-section">Dokumen</h2>
+        <label for="file_surat" class="form-label">Ganti File Surat (opsional)</label>
+        <input type="file" id="file_surat" name="file_surat"
+          class="form-control @error('file_surat') is-invalid @enderror"
+          accept=".pdf,.doc,.docx,.xls,.xlsx">
+        @error('file_surat') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
-    {{-- File surat baru (opsional update) --}}
-    <div class="mb-3">
-      <label for="file_surat" class="form-label">Ganti File Surat (opsional)</label>
-      <input type="file" id="file_surat" name="file_surat"
-        class="form-control @error('file_surat') is-invalid @enderror"
-        accept=".pdf,.doc,.docx,.xls,.xlsx">
-      @error('file_surat') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        @if(!empty($surat->file_surat))
+          <small class="text-muted d-block mt-2">
+            <i class="bi bi-paperclip me-1" aria-hidden="true"></i>File saat ini:
+            <a href="{{ route('surat.file', ['surat' => $surat->id_surats]) }}" target="_blank">{{ basename($surat->file_surat) }}</a>
+          </small>
+        @endif
 
-      @if(!empty($surat->file_surat))
-        <small class="text-muted">
-          File saat ini: <a href="{{ route('surat.file', ['surat' => $surat->id_surats]) }}" target="_blank">{{ basename($surat->file_surat) }}</a>
-        </small>
-      @endif
+        <div class="sx-actions">
+          <a href="{{ $backTo }}" id="btn-batal" class="sx-btn sx-btn-ghost">Batal</a>
+          <button type="submit" class="sx-btn sx-btn-primary"><i class="bi bi-check2-circle" aria-hidden="true"></i>Simpan Perubahan</button>
+        </div>
+      </form>
     </div>
-
-    <div class="d-flex gap-2">
-      <a href="{{ $backUrl ?? url()->previous() }}" id="btn-batal" class="btn btn-outline-secondary">Batal</a>
-      <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-    </div>
-  </form>
+  </div>
 </div>
 @endsection
 

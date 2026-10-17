@@ -60,4 +60,37 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', 'id_roles');
     }
 
+    /**
+     * URL foto anggota di public/anggota_mpr sesuai nama user; null jika tidak ada.
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        $map = [
+            'muzani'    => 'ahmad_muzani',
+            'bambang'   => 'bambang_wuryanto',
+            'kahar'     => 'kahar_muzakir',
+            'lestari'   => 'lestari',
+            'rusdi'     => 'rusdi',
+            'hidayat'   => 'hidayat_nur',
+            'soeparno'  => 'eddy_soeparno',
+            'edhie'     => 'edhie_baskoro',
+            'abcandra'  => 'abcandra',
+            'setjen'    => 'setjen',
+        ];
+
+        $name = strtolower((string) $this->name);
+        foreach ($map as $keyword => $file) {
+            if (!str_contains($name, $keyword)) {
+                continue;
+            }
+            foreach (['webp', 'jpg'] as $ext) {
+                if (file_exists(public_path("anggota_mpr/{$file}.{$ext}"))) {
+                    return asset("anggota_mpr/{$file}.{$ext}");
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

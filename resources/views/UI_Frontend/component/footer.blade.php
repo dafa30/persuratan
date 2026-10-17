@@ -46,6 +46,6 @@
 <!-- Footer -->
 <footer class="bg-white text-black py-4">
     <div class="container text-center">
-       <b><p class="footer">&copy; {{ date('Y') }} Sekretariat Jenderal MPR RI</p></b>
+       <b><p class="footer">&copy; {{ date('Y') }} Sekretariat Jenderal MPR RI &middot; SITEMAN-SUCA</p></b>
     </div>
 </footer>

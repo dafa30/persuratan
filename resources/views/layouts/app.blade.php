@@ -71,6 +71,12 @@
     .flash-stack-standard {
       top: 72px;
     }
+    .flash-stack-bare {
+      top: 16px;
+    }
+    @media (max-width: 767.98px) {
+      .flash-stack.flash-stack-bare { top: 10px; }
+    }
 
     .admin-header {
       position: sticky;
@@ -323,6 +329,125 @@
       }
     }
 
+    /* ====== Topbar & sidebar collapsible (dashboard admin) ====== */
+    .admin-sidebar {
+      overflow-x: hidden;
+      transition: width .3s cubic-bezier(.4, 0, .2, 1), transform .3s ease-in-out;
+    }
+    .admin-sidebar .offcanvas-body { overflow-x: hidden; overflow-y: auto; }
+    .admin-brand-text, .admin-link-text {
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 220px;
+      transition: opacity .2s ease, max-width .3s cubic-bezier(.4, 0, .2, 1);
+    }
+    .admin-sidebar-brand img { flex: 0 0 auto; }
+    .admin-sidebar-section-label { white-space: nowrap; overflow: hidden; transition: all .3s ease; }
+
+    .admin-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 64px;
+      margin-left: 268px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--admin-line);
+      background: #fff;
+      transition: margin-left .3s cubic-bezier(.4, 0, .2, 1);
+    }
+    .admin-sidebar-toggle {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 8px;
+      color: #4f5964;
+      background: transparent;
+      font-size: 24px;
+      transition: background-color .15s ease;
+    }
+    .admin-sidebar-toggle:hover { background: #f1f3f5; }
+    .admin-topbar-brand { display: inline-flex; align-items: center; gap: 8px; color: var(--admin-ink); text-decoration: none; }
+    .admin-topbar-brand img { width: 34px; height: 34px; object-fit: contain; }
+    .admin-topbar-brand strong { font-size: 13px; }
+    .admin-user-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 100%;
+      padding: 5px 14px 5px 6px;
+      border: 1px solid var(--admin-line);
+      border-radius: 999px;
+      color: #3b434c;
+      background: #fff;
+      font-size: 14px;
+      transition: box-shadow .15s ease, background-color .15s ease;
+    }
+    .admin-user-btn:hover, .admin-user-btn[aria-expanded="true"] { background: #f8f9fa; box-shadow: 0 2px 8px rgba(15, 23, 42, .08); }
+    .admin-user-avatar { color: var(--admin-gold); font-size: 30px; line-height: 1; }
+    .admin-user-photo { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--admin-gold); flex-shrink: 0; }
+    .admin-user-name { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .admin-user-chevron { font-size: 12px; transition: transform .25s ease; }
+    .admin-user-btn[aria-expanded="true"] .admin-user-chevron { transform: rotate(180deg); }
+    .admin-user { position: relative; }
+    .admin-user-menu {
+      display: block;
+      top: 100%;
+      right: 0;
+      left: auto;
+      min-width: 100%;
+      margin-top: 8px;
+      padding: 6px;
+      border: 1px solid var(--admin-line);
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, .14);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-8px) scale(.98);
+      transform-origin: top right;
+      transition: transform .18s ease, opacity .18s ease, visibility 0s linear .18s;
+    }
+    .admin-user-menu.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      transition: transform .18s ease, opacity .18s ease, visibility 0s;
+    }
+    .admin-user-menu .dropdown-item { border-radius: 8px; padding: 9px 12px; color: #8a3f3f; font-weight: 600; }
+    .admin-user-menu .dropdown-item:hover { color: #742d2d; background: #fbf1f0; }
+    .flash-stack-admin { top: 76px; }
+    .admin-no-anim *, .admin-no-anim *::before, .admin-no-anim *::after { transition: none !important; }
+
+    @media (min-width: 992px) {
+      .admin-main-sidebar { transition: margin-left .3s cubic-bezier(.4, 0, .2, 1), width .3s cubic-bezier(.4, 0, .2, 1); }
+      body.sidebar-collapsed .admin-sidebar { width: 76px; }
+      body.sidebar-collapsed .admin-topbar { margin-left: 76px; }
+      body.sidebar-collapsed .admin-main-sidebar { width: calc(100% - 76px); margin-left: 76px; }
+      body.sidebar-collapsed .admin-sidebar-brand { justify-content: center; gap: 0; padding-left: 0; padding-right: 0; }
+      body.sidebar-collapsed .admin-brand-text,
+      body.sidebar-collapsed .admin-link-text { max-width: 0; opacity: 0; }
+      body.sidebar-collapsed .admin-sidebar .offcanvas-body { padding-left: 10px; padding-right: 10px; }
+      body.sidebar-collapsed .admin-sidebar-section-label {
+        height: 1px;
+        margin: 16px 12px;
+        padding: 0;
+        font-size: 0;
+        background: #edf0f2;
+      }
+      body.sidebar-collapsed .admin-sidebar-link { justify-content: center; gap: 0; padding: 0; }
+    }
+    @media (max-width: 991.98px) {
+      .admin-topbar { margin-left: 0; padding: 0 14px; }
+      .admin-main-sidebar { margin-left: 0; width: 100%; }
+      .admin-user-name { max-width: 110px; }
+    }
+
     /* ====== Style lain (tetap dari versi sebelumnya) ====== */
     .timeline { list-style:none; padding:0; position:relative; }
     .timeline:before { content:''; position:absolute; top:0; bottom:0; width:4px; background:#0d6efd; left:20px; margin-left:-2px; }
@@ -424,15 +549,14 @@
       && request()->routeIs('surat.index', 'surat.masuk', 'surat.keluar', 'setting.role.*');
   @endphp
   @if($showAdminNav)
-  <div class="admin-mobile-header d-lg-none">
-    <a class="admin-sidebar-brand" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
-      <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
-      <span><strong>SITEMAN-SUCA</strong><small>Sistem Persuratan</small></span>
-    </a>
-    <button class="admin-mobile-trigger" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar" aria-controls="adminSidebar" aria-label="Buka menu">
-      <i class="bi bi-list" aria-hidden="true"></i>
-    </button>
-  </div>
+  <script>
+    try {
+      if (localStorage.getItem('adminSidebar') === 'collapsed' && window.innerWidth >= 992) {
+        document.body.classList.add('sidebar-collapsed');
+      }
+    } catch (e) {}
+    document.body.classList.add('admin-no-anim');
+  </script>
   <aside class="offcanvas-lg offcanvas-start admin-sidebar" tabindex="-1" id="adminSidebar" aria-label="Navigasi dashboard">
     <div class="offcanvas-header d-lg-none border-bottom">
       <h2 class="offcanvas-title fs-6 mb-0">Navigasi</h2>
@@ -440,30 +564,79 @@
     </div>
     <a class="admin-sidebar-brand d-none d-lg-flex" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
       <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
-      <span><strong>MAJELIS PERMUSYAWARATAN RAKYAT<br>REPUBLIK INDONESIA</strong><small>Sistem Persuratan</small></span>
+      <span class="admin-brand-text"><strong>MAJELIS PERMUSYAWARATAN RAKYAT<br>REPUBLIK INDONESIA</strong><small>Sistem Persuratan</small></span>
     </a>
     <div class="offcanvas-body">
       <div class="admin-sidebar-section-label">Menu utama</div>
       <nav aria-label="Menu utama">
-        <a class="admin-sidebar-link {{ $onAdminIndex ? 'active' : '' }}" href="{{ route('surat.index') }}"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>Dashboard</a>
-        <a class="admin-sidebar-link {{ $onIncoming ? 'active' : '' }}" href="{{ route('surat.masuk') }}"><i class="bi bi-inbox-fill" aria-hidden="true"></i>Surat Masuk</a>
-        <a class="admin-sidebar-link {{ $onOutgoing ? 'active' : '' }}" href="{{ route('surat.keluar') }}"><i class="bi bi-send-fill" aria-hidden="true"></i>Surat Keluar</a>
-        <a class="admin-sidebar-link" href="{{ route('surat.create') }}"><i class="bi bi-plus-square" aria-hidden="true"></i>Tambah Surat</a>
+        <a class="admin-sidebar-link {{ $onAdminIndex ? 'active' : '' }}" href="{{ route('surat.index') }}" title="Dashboard"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i><span class="admin-link-text">Dashboard</span></a>
       </nav>
       <div class="admin-sidebar-section-label">Administrasi</div>
       <nav aria-label="Administrasi">
-        <a class="admin-sidebar-link {{ $onSettingRole ? 'active' : '' }}" href="{{ route('setting.role.index') }}"><i class="bi bi-people-fill" aria-hidden="true"></i>Pengaturan Pengguna</a>
+        <a class="admin-sidebar-link {{ $onIncoming ? 'active' : '' }}" href="{{ route('surat.masuk') }}" title="Surat Masuk"><i class="bi bi-inbox-fill" aria-hidden="true"></i><span class="admin-link-text">Surat Masuk</span></a>
+        <a class="admin-sidebar-link {{ $onOutgoing ? 'active' : '' }}" href="{{ route('surat.keluar') }}" title="Surat Keluar"><i class="bi bi-send-fill" aria-hidden="true"></i><span class="admin-link-text">Surat Keluar</span></a>
+        <a class="admin-sidebar-link" href="{{ route('surat.create') }}" title="Tambah Surat"><i class="bi bi-plus-square" aria-hidden="true"></i><span class="admin-link-text">Tambah Surat</span></a>
       </nav>
-      <div class="admin-sidebar-bottom">
-        <div class="admin-sidebar-user"><i class="bi bi-person-circle" aria-hidden="true"></i>{{ auth()->user()->name }}</div>
-        <form action="{{ route('logout') }}" method="POST">
-          @csrf
-          <button type="submit" class="admin-sidebar-logout"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</button>
-        </form>
-      </div>
+      <div class="admin-sidebar-section-label">User</div>
+      <nav aria-label="User">
+        <a class="admin-sidebar-link {{ $onSettingRole ? 'active' : '' }}" href="{{ route('setting.role.index') }}" title="Pengaturan Pengguna"><i class="bi bi-people-fill" aria-hidden="true"></i><span class="admin-link-text">Pengaturan Pengguna</span></a>
+      </nav>
     </div>
   </aside>
-  @else
+
+  <header class="admin-topbar">
+    <button class="admin-sidebar-toggle" type="button" id="adminSidebarToggle" aria-controls="adminSidebar" aria-label="Buka atau tutup sidebar">
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+    <a class="admin-topbar-brand d-lg-none" href="{{ route('surat.index') }}" aria-label="Dashboard Persuratan MPR RI">
+      <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
+      <strong>SITEMAN-SUCA</strong>
+    </a>
+    <div class="dropdown admin-user ms-auto">
+      <button class="admin-user-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-label="Menu pengguna">
+        @if (auth()->user()->foto_url)
+          <img src="{{ auth()->user()->foto_url }}" alt="" class="admin-user-photo">
+        @else
+          <i class="bi bi-person-circle admin-user-avatar" aria-hidden="true"></i>
+        @endif
+        <span class="admin-user-name">{{ auth()->user()->name }}</span>
+        <i class="bi bi-chevron-down admin-user-chevron" aria-hidden="true"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end admin-user-menu">
+        <li>
+          <form action="{{ route('logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Keluar</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  @push('scripts')
+  <script>
+    (function () {
+      const toggle = document.getElementById('adminSidebarToggle');
+      const sidebar = document.getElementById('adminSidebar');
+      if (!toggle || !sidebar) return;
+
+      toggle.setAttribute('aria-expanded', String(!document.body.classList.contains('sidebar-collapsed')));
+
+      toggle.addEventListener('click', () => {
+        if (window.innerWidth >= 992) {
+          const collapsed = document.body.classList.toggle('sidebar-collapsed');
+          toggle.setAttribute('aria-expanded', String(!collapsed));
+          try { localStorage.setItem('adminSidebar', collapsed ? 'collapsed' : 'expanded'); } catch (e) {}
+        } else {
+          bootstrap.Offcanvas.getOrCreateInstance(sidebar).toggle();
+        }
+      });
+
+      requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('admin-no-anim')));
+    })();
+  </script>
+  @endpush
+  @elseif(!View::hasSection('no_navbar'))
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container">
       <a class="navbar-brand" href="{{ route('surat.index') }}">Sistem Persuratan</a>
@@ -501,7 +674,7 @@
   @endif
 
   {{-- Flash alert stack (pojok kanan atas) --}}
-  <div class="flash-stack {{ $showAdminNav ? 'flash-stack-admin' : 'flash-stack-standard' }}">
+  <div class="flash-stack {{ $showAdminNav ? 'flash-stack-admin' : (View::hasSection('no_navbar') ? 'flash-stack-bare' : 'flash-stack-standard') }}">
     @php($flashSuccess = session()->pull('success'))
     @if($flashSuccess)
       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -532,6 +705,8 @@
   {{-- Main --}}
   @if($showAdminNav)
   <main class="container-fluid admin-main admin-main-sidebar">
+  @elseif(View::hasSection('no_navbar'))
+  <main class="container py-4 py-md-5 page-no-navbar">
   @else
   <main class="container mt-5 pt-3">
   @endif
@@ -624,6 +799,54 @@
         history.replaceState({}, '', url);
       }
     });
+  </script>
+
+  @include('partials.confirm-delete')
+
+  {{-- Overlay loading elegan saat surat diproses --}}
+  <style>
+    #suratLoading{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;
+      background:rgba(15,30,60,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+      opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease}
+    #suratLoading.show{opacity:1;visibility:visible}
+    #suratLoading .sl-card{background:#fff;border-radius:16px;padding:2rem 2.5rem;text-align:center;min-width:280px;max-width:calc(100vw - 32px);
+      box-shadow:0 20px 50px rgba(0,0,0,.3);transform:translateY(12px) scale(.97);transition:transform .35s ease}
+    #suratLoading.show .sl-card{transform:none}
+    #suratLoading .sl-ring{position:relative;width:64px;height:64px;margin:0 auto 1.25rem}
+    #suratLoading .sl-ring::before,#suratLoading .sl-ring::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid transparent}
+    #suratLoading .sl-ring::before{border-top-color:#1e3a8a;border-right-color:#1e3a8a;animation:slSpin 1.1s cubic-bezier(.5,.1,.5,.9) infinite}
+    #suratLoading .sl-ring::after{inset:10px;border-bottom-color:#c9a227;border-left-color:#c9a227;animation:slSpin 1.6s linear infinite reverse}
+    #suratLoading .sl-title{font-weight:600;color:#1e3a8a;margin-bottom:.25rem}
+    #suratLoading .sl-sub{font-size:.85rem;color:#6b7280}
+    #suratLoading .sl-dots span{display:inline-block;animation:slFade 1.4s infinite both}
+    #suratLoading .sl-dots span:nth-child(2){animation-delay:.2s}
+    #suratLoading .sl-dots span:nth-child(3){animation-delay:.4s}
+    @keyframes slSpin{to{transform:rotate(360deg)}}
+    @keyframes slFade{0%,80%,100%{opacity:.2}40%{opacity:1}}
+    @media (prefers-reduced-motion:reduce){#suratLoading .sl-ring::before,#suratLoading .sl-ring::after{animation-duration:3s}}
+  </style>
+  <div id="suratLoading" role="status" aria-live="polite" aria-hidden="true">
+    <div class="sl-card">
+      <div class="sl-ring"></div>
+      <div class="sl-title">Memproses Surat<span class="sl-dots"><span>.</span><span>.</span><span>.</span></span></div>
+      <div class="sl-sub">Mohon tunggu, jangan menutup halaman ini.</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const ov = document.getElementById('suratLoading');
+      document.addEventListener('submit', function (e) {
+        const f = e.target;
+        if (!f || f.id !== 'formSurat') return;
+        setTimeout(() => {
+          if (e.defaultPrevented) return;
+          ov.classList.add('show');
+          ov.setAttribute('aria-hidden', 'false');
+          f.querySelectorAll('button[type=submit]').forEach(b => b.disabled = true);
+        }, 0);
+      });
+      window.addEventListener('pageshow', () => ov.classList.remove('show'));
+    })();
   </script>
 
   {{-- (Opsional) Auto-dismiss semua alert setelah 3 detik --}}

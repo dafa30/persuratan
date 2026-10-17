@@ -74,7 +74,11 @@
             <li class="nav-item dropdown ms-3 position-relative">
                 <a class="nav-link dropdown-toggle user-menu-toggle" href="#" data-bs-toggle="dropdown"
                   data-bs-display="static" aria-expanded="false" aria-label="Menu pengguna" title="Menu pengguna">
-                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                @if (Auth::user()->foto_url)
+                  <img src="{{ Auth::user()->foto_url }}" alt="" class="user-photo" style="width:30px;height:30px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid #d4af37;">
+                @else
+                  <i class="bi bi-person-circle" aria-hidden="true"></i>
+                @endif
                 <span class="user-name">{{ Auth::user()->name }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
@@ -154,7 +158,14 @@
       <div class="dropdown-mobile mobile-user">
         <a href="#" aria-label="Menu pengguna"
            onclick="event.preventDefault(); this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show');">
-          <span><i class="bi bi-person-circle me-2" aria-hidden="true"></i>{{ Auth::user()->name }}</span>
+          <span class="mobile-user-identity">
+            @if (Auth::user()->foto_url)
+              <img src="{{ Auth::user()->foto_url }}" alt="" class="mobile-user-photo">
+            @else
+              <i class="bi bi-person-circle" aria-hidden="true"></i>
+            @endif
+            <span>{{ Auth::user()->name }}</span>
+          </span>
           <span class="chevron">▾</span>
         </a>
         <div class="submenu-mobile">

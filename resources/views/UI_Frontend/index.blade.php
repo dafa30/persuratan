@@ -612,6 +612,29 @@
             transition: transform 0.3s ease;
         }
 
+        .mobile-user-identity {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .mobile-user-photo {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            border: 2px solid #d4af37;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .mobile-user-identity .bi-person-circle {
+            margin-right: 0;
+            color: #d4af37;
+            font-size: 1.5rem;
+        }
+
         .dropdown-mobile>a.active .chevron {
             transform: rotate(120deg);
         }
@@ -1344,6 +1367,7 @@
     @endif
 
     @include('UI_Frontend.component.footer')
+    @include('partials.confirm-delete')
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

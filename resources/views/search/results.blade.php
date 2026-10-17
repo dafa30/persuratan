@@ -7,6 +7,7 @@
     @if($data_surat->isEmpty())
     <div class="alert alert-warning">Tidak ada surat ditemukan.</div>
     @else
+    <div class="table-responsive">
     <table class="table table-striped">
         <thead>
             <tr class="text-center">
@@ -54,6 +55,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
     @endif
 </div>
 @endsection

@@ -84,6 +84,23 @@ class Surat extends Model
         return $this->penerima_eksternal ?: optional($this->penerima)->name;
     }
 
+    /**
+     * Tandai 'dibaca' hanya bila $user adalah penerima surat ini.
+     * Pengirim (atau user lain) yang melihat tidak mengubah status.
+     */
+    public function markAsReadBy($user): void
+    {
+        if (!$user || $this->status === 'dibaca' || !$this->penerima_id) {
+            return;
+        }
+        if ((int) $this->penerima_id !== (int) $user->id_users) {
+            return;
+        }
+        $this->status = 'dibaca';
+        $this->dibaca = now();
+        $this->save();
+    }
+
     public function getJenisUntukTuAttribute()
     {
         return ($this->jenis_surat === 'keluar' && $this->pengirim_nama === 'Caraka')

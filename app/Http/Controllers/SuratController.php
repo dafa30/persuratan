@@ -250,7 +250,22 @@ class SuratController extends Controller
         $suratMasukCount = $this->applyDashboardDateFilters($suratMasukQuery, $request)->count();
         $suratKeluarCount = $this->applyDashboardDateFilters($suratKeluarQuery, $request)->count();
 
-        return view('surat.dashboard', compact('suratMasukCount', 'suratKeluarCount', 'years'));
+        $userCount = \App\Models\User::count();
+
+        $start = now()->startOfMonth()->subMonths(11);
+        $rows = Surat::where('created_at', '>=', $start)->get(['jenis_surat', 'created_at']);
+        $chartLabels = [];
+        $chartMasuk = [];
+        $chartKeluar = [];
+        for ($i = 0; $i < 12; $i++) {
+            $m = $start->copy()->addMonths($i);
+            $chartLabels[] = $m->locale('id')->translatedFormat('M Y');
+            $inMonth = $rows->filter(fn ($r) => $r->created_at->isSameMonth($m));
+            $chartMasuk[] = $inMonth->where('jenis_surat', 'masuk')->count();
+            $chartKeluar[] = $inMonth->where('jenis_surat', 'keluar')->count();
+        }
+
+        return view('surat.dashboard', compact('suratMasukCount', 'suratKeluarCount', 'years', 'userCount', 'chartLabels', 'chartMasuk', 'chartKeluar'));
     }
 
     // ===== Wakil: mapping & helper =====
@@ -913,12 +928,8 @@ class SuratController extends Controller
         try {
             $surat = Surat::where('kategori', $kategori)->findOrFail($id_surats);
 
-            // Jika status surat belum 'dibaca', maka ubah status jadi 'dibaca' dan catat waktu dibaca
-            if ($surat->status !== 'dibaca') {
-                $surat->status = 'dibaca';
-                $surat->dibaca = Carbon::now();
-                $surat->save();
-            }
+            // Status berubah menjadi 'dibaca' hanya jika yang melihat adalah penerima surat
+            $surat->markAsReadBy(auth()->user());
 
             $pdfPath = null;
             if ($surat->file_surat) {
@@ -956,12 +967,8 @@ class SuratController extends Controller
             // 1) Ambil surat sesuai kategori
             $surat = Surat::where('kategori', $kategori)->findOrFail($id_surats);
 
-            // 2) Update status baca (sekali saja)
-            if ($surat->status !== 'dibaca') {
-                $surat->status = 'dibaca';
-                $surat->dibaca = Carbon::now();
-                $surat->save();
-            }
+            // Status berubah menjadi 'dibaca' hanya jika yang melihat adalah penerima surat
+            $surat->markAsReadBy(auth()->user());
 
             // 3) Siapkan PDF path publik (sesuai penyimpanan "storage/...")
             $pdfPath = null;
@@ -1009,12 +1016,8 @@ class SuratController extends Controller
         try {
             $surat = Surat::where('kategori', $kategori)->findOrFail($id_surats);
 
-            // Jika status surat belum 'dibaca', maka ubah status jadi 'dibaca' dan catat waktu dibaca
-            if ($surat->status !== 'dibaca') {
-                $surat->status = 'dibaca';
-                $surat->dibaca = Carbon::now();
-                $surat->save();
-            }
+            // Status berubah menjadi 'dibaca' hanya jika yang melihat adalah penerima surat
+            $surat->markAsReadBy(auth()->user());
 
             $pdfPath = null;
             if ($surat->file_surat) {
@@ -1128,12 +1131,8 @@ class SuratController extends Controller
 
         try {
             $surat = Surat::where('kategori', $kategori)->findOrFail($id_surats);
-            // Jika status surat belum 'dibaca', maka ubah status jadi 'dibaca' dan catat waktu dibaca
-            if ($surat->status !== 'dibaca') {
-                $surat->status = 'dibaca';
-                $surat->dibaca = Carbon::now();
-                $surat->save();
-            }   
+            // Status berubah menjadi 'dibaca' hanya jika yang melihat adalah penerima surat
+            $surat->markAsReadBy(auth()->user());   
             $pdfPath = null;
             if ($surat->file_surat) {
                 $publicUrlPath = $surat->file_surat;

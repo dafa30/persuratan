@@ -1,31 +1,48 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="container">
-    <h3 class="mb-3">Edit (Caraka) - Upload Bukti</h3>
+@section('no_navbar', '')
 
-    <form method="POST" action="{{ route('surat.update.caraka', $surat) }}" enctype="multipart/form-data">
+@push('styles')
+  @include('surat.partials.modern-style')
+@endpush
+
+@section('content')
+@php $backTo = $backUrl ?? route('surat.bagianTU_biasa'); @endphp
+<div class="sx-wrap">
+  <a class="sx-brand" href="{{ $backTo }}" aria-label="Kembali">
+    <img src="{{ asset('logo1.png') }}" alt="Logo MPR RI">
+    <span><strong>SITEMAN-SUCA</strong><small>Sekretariat Jenderal MPR RI</small></span>
+  </a>
+
+  <div class="sx-card">
+    <div class="sx-card-head">
+      <span class="sx-card-icon"><i class="bi bi-camera" aria-hidden="true"></i></span>
+      <div>
+        <h1>Upload Bukti Penerimaan</h1>
+        <p>Unggah foto bukti surat telah diterima (Caraka).</p>
+      </div>
+    </div>
+
+    <div class="sx-card-body">
+      <form method="POST" action="{{ route('surat.update.caraka', $surat) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
-        {{-- penting: agar setelah simpan kembali ke halaman asal (Bagian TU) --}}
         <input type="hidden" name="back" value="{{ $backHash ?? base64_encode(route('surat.bagianTU_biasa')) }}">
 
-        <div class="mb-3">
-            <label class="form-label">Bukti Foto (JPG/PNG)</label>
-            <input
-                type="file"
-                name="file_bukti_terima"
-                accept="image/png,image/jpeg"
-                class="form-control @error('file_bukti_terima') is-invalid @enderror">
-            @error('file_bukti_terima') <div class="invalid-feedback">{{ $message }}</div> @enderror
-        </div>
+        <h2 class="sx-section">Bukti Foto</h2>
+        <label class="form-label">Bukti Foto (JPG/PNG)</label>
+        <input type="file" name="file_bukti_terima" accept="image/png,image/jpeg"
+               class="form-control @error('file_bukti_terima') is-invalid @enderror">
+        @error('file_bukti_terima') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
-        <div class="d-flex gap-2">
-            <a href="{{ $backUrl ?? route('surat.bagianTU_biasa') }}" id="btn-batal" class="btn btn-outline-secondary">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        <div class="sx-actions">
+          <a href="{{ $backTo }}" id="btn-batal" class="sx-btn sx-btn-ghost">Batal</a>
+          <button type="submit" class="sx-btn sx-btn-primary"><i class="bi bi-check2-circle" aria-hidden="true"></i>Simpan Perubahan</button>
         </div>
-    </form>
+      </form>
+    </div>
+  </div>
 </div>
 @endsection
 
