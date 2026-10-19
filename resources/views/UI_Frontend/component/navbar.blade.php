@@ -114,6 +114,7 @@
       </div>
     </div>
 
+    @auth
     <div class="mobile-search">
       <button class="search-toggle mobile-search-toggle" type="button" aria-label="Buka pencarian surat" aria-expanded="false">
         <i class="bi bi-search" aria-hidden="true"></i>
@@ -129,6 +130,7 @@
         </form>
       </div>
     </div>
+    @endauth
 
     <a href="{{ route('halaman_muka') }}">Halaman Muka</a>
     <a href="{{ route('surat.ketuampr') }}">Surat Ketua MPR</a>
@@ -175,6 +177,21 @@
               <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
             </button>
           </form>
+        </div>
+      </div>
+    @else
+      <div class="dropdown-mobile mobile-user mobile-guest">
+        <a href="#" aria-label="Menu akun"
+           onclick="event.preventDefault(); this.classList.toggle('active'); this.nextElementSibling.classList.toggle('show');">
+          <span class="mobile-user-identity">
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            <span>Akun</span>
+          </span>
+          <span class="chevron">▾</span>
+        </a>
+        <div class="submenu-mobile">
+          <a href="{{ route('login') }}"><i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Login</a>
+          <a href="{{ route('register') }}"><i class="bi bi-person-plus me-2" aria-hidden="true"></i>Daftar</a>
         </div>
       </div>
     @endauth

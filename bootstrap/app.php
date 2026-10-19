@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\RedirectHttpToHttps;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\TrustProxies;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([__DIR__.'/../app/Console/Commands'])
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->replace(\Illuminate\Http\Middleware\TrustProxies::class, TrustProxies::class);
         $middleware->web(append: [
             RedirectHttpToHttps::class,
             SecurityHeaders::class,
