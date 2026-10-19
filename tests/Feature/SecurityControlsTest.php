@@ -17,6 +17,16 @@ class SecurityControlsTest extends TestCase
             ->assertRedirect('https://persuratan.test/halaman_muka?source=lighthouse');
     }
 
+    public function test_responses_carry_security_headers(): void
+    {
+        $this->app['env'] = 'local';
+
+        $this->get('/halaman_muka')
+            ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    }
+
     public function test_local_http_requests_are_not_redirected_to_https(): void
     {
         $this->app['env'] = 'local';

@@ -20,7 +20,11 @@ class AdminSuratListViewsTest extends TestCase
         $this->view('surat.dashboard', [
             'suratMasukCount' => 5,
             'suratKeluarCount' => 2,
+            'userCount' => 3,
             'years' => collect([2026]),
+            'chartLabels' => [],
+            'chartMasuk' => [],
+            'chartKeluar' => [],
         ])
             ->assertSee('Dashboard Persuratan MPR RI')
             ->assertSee('7')
