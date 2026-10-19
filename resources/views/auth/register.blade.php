@@ -11,54 +11,18 @@
 <h1 class="login-title">Register SITEMAN-SUCA</h1>
 <p class="login-subtitle">Majelis Permusyawaratan Rakyat Republik Indonesia</p>
 
-{{-- Modal sukses registrasi --}}
 @if(session('register_success'))
-    <div class="modal fade" id="registerSuccessModal" tabindex="-1"
-         aria-labelledby="registerSuccessLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-semibold" id="registerSuccessLabel">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                        Registrasi Berhasil
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body pt-0">
-                    {{ session('success') ?? 'Akun berhasil dibuat. Silakan login.' }}
-                </div>
-                <div class="modal-footer border-0">
-                    {{-- Pakai <a> supaya pasti redirect tanpa JS event --}}
-                    <a href="{{ route('login') }}" class="btn btn-primary w-100">
-                        Oke, saya login
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     @push('scripts')
     <script>
-        (function () {
-            var modalEl = document.getElementById('registerSuccessModal');
-            if (modalEl && window.bootstrap) {
-                var modal = new bootstrap.Modal(modalEl);
-                modal.show();
-            }
-        })();
+        sxNotice({
+            type: 'success',
+            title: 'Registrasi Berhasil',
+            message: @json(session('success') ?? 'Akun berhasil dibuat. Silakan login.'),
+            button: 'Oke, saya login',
+            onClose: function () { window.location.href = @json(route('login')); }
+        });
     </script>
     @endpush
-@endif
-
-@if ($errors->any())
-<div class="alert alert-danger text-start">
-  <ul class="mb-0">
-    @foreach ($errors->all() as $error)
-    <li>{{ $error }}</li>
-    @endforeach
-  </ul>
-</div>
 @endif
 
 <form id="registerForm" action="{{ route('register.post') }}" method="post">

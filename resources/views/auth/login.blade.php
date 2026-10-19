@@ -11,25 +11,6 @@
 <h1 class="login-title">Login SITEMAN-SUCA</h1>
 <p class="login-subtitle">Majelis Permusyawaratan Rakyat Republik Indonesia</p>
 
-  {{-- Notifikasi sukses (misal setelah registrasi) --}}
-  @if (session('success'))
-      <div class="alert alert-success text-start mb-3">
-          <i class="bi bi-check-circle-fill me-2"></i>
-          {{ session('success') }}
-      </div>
-  @endif
-
-  {{-- Error validasi dari server --}}
-  @if ($errors->any())
-    <div class="alert alert-danger text-start">
-      <ul class="mb-0">
-        @foreach ($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
-
   <form id="loginForm" action="{{ route('login.post') }}" method="post">
     @csrf
 

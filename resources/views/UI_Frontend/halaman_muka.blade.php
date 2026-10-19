@@ -65,7 +65,10 @@
           <a href="{{ $isLoggedIn ? $href : route('login') }}"
             data-aos="zoom-in"
            class="card-custom w-100 text-decoration-none text-dark"
-           onclick="{{ $isLoggedIn ? '' : 'alert(\'Silakan login terlebih dahulu!\');' }}">
+           @unless($isLoggedIn)
+           data-no-loading
+           onclick="event.preventDefault(); sxNotice({ type: 'warning', title: 'Login Diperlukan', message: 'Silakan login terlebih dahulu untuk mengakses halaman ini.', button: 'Login Sekarang', onClose: function () { window.location.href = '{{ route('login') }}'; } });"
+           @endunless>
           <img src="{{ asset($anggota['img']) }}" alt="{{ $anggota['nama'] }}"
             width="120" height="120" loading="lazy" decoding="async">
           <div class="card-body">

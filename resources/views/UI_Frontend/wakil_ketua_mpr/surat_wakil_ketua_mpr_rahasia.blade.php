@@ -2,7 +2,7 @@
 @section('content')
 
 <div class="container">
-    <h2>Daftar Surat Wakil Ketua MPR Rahasia</h2>
+    @include('UI_Frontend.wakil_ketua_mpr.partials.judul', ['kategori' => 'Rahasia'])
     @include('components.surat-date-filter', ['years' => $years])
 
     @php

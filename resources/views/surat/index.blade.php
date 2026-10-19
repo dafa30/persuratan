@@ -197,11 +197,6 @@
 
 @section('content')
 
-{{-- Notifikasi error --}}
-@if (session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
-
 <div class="admin-dashboard">
     <div class="dashboard-heading">
         <div>

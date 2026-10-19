@@ -20,56 +20,9 @@
             )
         ));
         $isCaraka = ($roleName === 'caraka');
-
-        // Ambil dari query ?wakil=... kalau ada, kalau tidak pakai segmen URL terakhir
-        $slug = trim((string) request('wakil', collect(request()->segments())->last()));
-
-        // Hindari kata umum agar tidak salah deteksi
-        $stop = ['biasa','surat','wakil','ketua','mpr','rahasia','sangat-rahasia','ketuampr','wakil-ketuampr'];
-        if (in_array(strtolower($slug), $stop, true)) {
-            $slug = '';
-        }
-
-        /**
-         * PATCH: Cocokkan slug URL ke nama resmi dari config('pimpinan.daftar')
-         * - Hilangkan gelar depan (Ir., Drs., Dr., H.) berulang
-         * - Hilangkan inisial satu huruf di depan (mis. "M. ")
-         * - Hilangkan tanda titik & koma (M.B.A. -> MBA, S.H. -> SH, B.Com. -> BCom)
-         * - Slugify lalu bandingkan dengan $slug dari URL
-         */
-        $wakilNama = 'Wakil Ketua MPR';
-        if ($slug !== '') {
-            $whitelist = collect(config('pimpinan.daftar', []));
-
-            $makeWhitelistSlug = function (string $name): string {
-                $n = trim($name);
-
-                // Buang gelar depan berulang (Ir., Drs., Dr., H.)
-                do {
-                    $before = $n;
-                    $n = preg_replace('/^(?:Ir|Drs|Dr|H)\.\s*/i', '', $n);
-                } while ($n !== $before);
-
-                // Buang inisial satu huruf di awal, mis. "M. "
-                $n = preg_replace('/^[A-Z]\.\s*/', '', $n);
-
-                // Hilangkan titik & koma, rapikan spasi
-                $n = str_replace([',', '.'], [' ', ''], $n);
-                $n = preg_replace('/\s+/', ' ', $n);
-
-                // Slugify (tanpa perlu use; pakai FQCN)
-                return \Illuminate\Support\Str::slug($n);
-            };
-
-            // Map-kan: slug_whitelist => nama_resmi
-            $map = $whitelist->mapWithKeys(fn ($nama) => [$makeWhitelistSlug($nama) => $nama]);
-
-            // Ambil nama resmi bila cocok; jika tidak, fallback ke Title Case dari slug
-            $wakilNama = $map->get($slug) ?? ucwords(str_replace(['-','_'], ' ', $slug));
-        }
     @endphp
 
-    <h2>Daftar Surat Wakil Ketua MPR Biasa — {{ $wakilNama }}</h2>
+    @include('UI_Frontend.wakil_ketua_mpr.partials.judul', ['kategori' => 'Biasa'])
     @include('components.surat-date-filter', ['years' => $years])
 
     {{-- <form action="{{ request()->url() }}" method="GET" class="mb-4 row g-2">

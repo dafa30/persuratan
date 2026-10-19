@@ -2,18 +2,6 @@
 
 @section('content')
 
-@if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
-
 <div class="container">
     <h1>Selamat Datang di Sistem Surat</h1>
     <p>Sistem ini memungkinkan Anda untuk mengelola surat masuk dan keluar dengan mudah.</p>

@@ -276,14 +276,6 @@
       color: #9CA3AF;
     }
 
-    /* Toast positioning */
-    .toast-container {
-      position: fixed;
-      top: 1.1rem;
-      right: 1.1rem;
-      z-index: 9999;
-    }
-
     @media (max-width: 576px) {
       .login-wrapper {
         padding: 1rem;
@@ -298,20 +290,7 @@
   @stack('styles')
 </head>
 <body>
-  <!-- Toast Notification -->
-  <div class="toast-container">
-    @if(session('success') && !session('register_success'))
-      <div id="loginToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            {{ session('success') }}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-      </div>
-    @endif
-  </div>
-
+    @include('partials.page-loading')
   <div class="login-wrapper">
     <div class="login-card">
       @yield('content')
@@ -338,14 +317,10 @@
       if (passwordInput) passwordInput.type = this.checked ? 'text' : 'password';
     });
 
-    // Inisialisasi Toast sukses (kalau ada)
-    const toastEl = document.getElementById('loginToast');
-    if (toastEl && window.bootstrap?.Toast) {
-      const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { autohide: true, delay: 3000 });
-      toast.show();
-    }
   </script>
 
+  @include('partials.notice-dialog')
+  @include('partials.toast')
   @stack('scripts')
 </body>
 </html>

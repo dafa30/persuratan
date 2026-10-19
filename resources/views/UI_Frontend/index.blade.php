@@ -1335,6 +1335,7 @@
 </head>
 
 <body>
+    @include('partials.page-loading')
     <!-- Burger untuk navigasi mobile -->
     <div class="top-bar-fixed" id="topBar">
         <div class="burger" onclick="toggleNav()">
@@ -1350,24 +1351,10 @@
         @yield('content')
     </main>
 
-    {{-- Toast container --}}
-    @if(session('success'))
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1060">
-        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert"
-            aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-    @endif
-
     @include('UI_Frontend.component.footer')
     @include('partials.confirm-delete')
+    @include('partials.notice-dialog')
+    @include('partials.toast')
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -1421,12 +1408,6 @@
             nav.classList.toggle('show');
             burger.classList.toggle('open');
         }
-        document.addEventListener('DOMContentLoaded', function () {
-            var toastEl = document.getElementById('successToast');
-            if (toastEl) {
-            new bootstrap.Toast(toastEl, { delay: 3000 }).show();
-            }
-        });
     </script>
 </body>
 

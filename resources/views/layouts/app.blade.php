@@ -50,34 +50,6 @@
       .navbar .dropdown-menu { transition: none !important; }
     }
 
-    /* ====== Flash alert: pojok kanan atas ====== */
-    .flash-stack{
-      position: fixed;
-      right: 16px;
-      top: 142px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 2000;              /* di atas navbar & konten */
-    }
-    .flash-stack .alert{
-      max-width: 340px;           /* tidak kepanjangan */
-      padding: 8px 12px;
-      font-size: 14px;
-      border-radius: 8px;
-      box-shadow: 0 6px 18px rgba(0,0,0,.1);
-      margin: 0;                  /* hilangkan margin default alert */
-    }
-    .flash-stack-standard {
-      top: 72px;
-    }
-    .flash-stack-bare {
-      top: 16px;
-    }
-    @media (max-width: 767.98px) {
-      .flash-stack.flash-stack-bare { top: 10px; }
-    }
-
     .admin-header {
       position: sticky;
       top: 0;
@@ -319,14 +291,6 @@
       }
       .admin-main-sidebar { width: 100%; min-height: calc(100vh - 62px); margin-left: 0; padding: 20px 16px 36px; }
       .admin-sidebar { border: 0; box-shadow: 12px 0 30px rgba(15, 23, 42, .16); }
-      .flash-stack {
-        top: 126px;
-        right: 10px;
-        left: 10px;
-      }
-      .flash-stack .alert {
-        max-width: none;
-      }
     }
 
     /* ====== Topbar & sidebar collapsible (dashboard admin) ====== */
@@ -421,7 +385,6 @@
     }
     .admin-user-menu .dropdown-item { border-radius: 8px; padding: 9px 12px; color: #8a3f3f; font-weight: 600; }
     .admin-user-menu .dropdown-item:hover { color: #742d2d; background: #fbf1f0; }
-    .flash-stack-admin { top: 76px; }
     .admin-no-anim *, .admin-no-anim *::before, .admin-no-anim *::after { transition: none !important; }
 
     @media (min-width: 992px) {
@@ -538,6 +501,7 @@
   @stack('styles')
 </head>
 <body>
+  @include('partials.page-loading')
 
   @php
     $onAdminIndex = request()->routeIs('surat.index');
@@ -673,35 +637,6 @@
   </nav>
   @endif
 
-  {{-- Flash alert stack (pojok kanan atas) --}}
-  <div class="flash-stack {{ $showAdminNav ? 'flash-stack-admin' : (View::hasSection('no_navbar') ? 'flash-stack-bare' : 'flash-stack-standard') }}">
-    @php($flashSuccess = session()->pull('success'))
-    @if($flashSuccess)
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ $flashSuccess }}
-      </div>
-    @endif
-
-    @if (session('error'))
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
-
-    @if ($errors->any())
-      <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>Periksa kembali input Anda.</strong>
-        <ul class="mb-0 ps-3">
-          @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-          @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
-  </div>
-
   {{-- Main --}}
   @if($showAdminNav)
   <main class="container-fluid admin-main admin-main-sidebar">
@@ -802,61 +737,8 @@
   </script>
 
   @include('partials.confirm-delete')
-
-  {{-- Overlay loading elegan saat surat diproses --}}
-  <style>
-    #suratLoading{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;
-      background:rgba(15,30,60,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-      opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease}
-    #suratLoading.show{opacity:1;visibility:visible}
-    #suratLoading .sl-card{background:#fff;border-radius:16px;padding:2rem 2.5rem;text-align:center;min-width:280px;max-width:calc(100vw - 32px);
-      box-shadow:0 20px 50px rgba(0,0,0,.3);transform:translateY(12px) scale(.97);transition:transform .35s ease}
-    #suratLoading.show .sl-card{transform:none}
-    #suratLoading .sl-ring{position:relative;width:64px;height:64px;margin:0 auto 1.25rem}
-    #suratLoading .sl-ring::before,#suratLoading .sl-ring::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid transparent}
-    #suratLoading .sl-ring::before{border-top-color:#1e3a8a;border-right-color:#1e3a8a;animation:slSpin 1.1s cubic-bezier(.5,.1,.5,.9) infinite}
-    #suratLoading .sl-ring::after{inset:10px;border-bottom-color:#c9a227;border-left-color:#c9a227;animation:slSpin 1.6s linear infinite reverse}
-    #suratLoading .sl-title{font-weight:600;color:#1e3a8a;margin-bottom:.25rem}
-    #suratLoading .sl-sub{font-size:.85rem;color:#6b7280}
-    #suratLoading .sl-dots span{display:inline-block;animation:slFade 1.4s infinite both}
-    #suratLoading .sl-dots span:nth-child(2){animation-delay:.2s}
-    #suratLoading .sl-dots span:nth-child(3){animation-delay:.4s}
-    @keyframes slSpin{to{transform:rotate(360deg)}}
-    @keyframes slFade{0%,80%,100%{opacity:.2}40%{opacity:1}}
-    @media (prefers-reduced-motion:reduce){#suratLoading .sl-ring::before,#suratLoading .sl-ring::after{animation-duration:3s}}
-  </style>
-  <div id="suratLoading" role="status" aria-live="polite" aria-hidden="true">
-    <div class="sl-card">
-      <div class="sl-ring"></div>
-      <div class="sl-title">Memproses Surat<span class="sl-dots"><span>.</span><span>.</span><span>.</span></span></div>
-      <div class="sl-sub">Mohon tunggu, jangan menutup halaman ini.</div>
-    </div>
-  </div>
-  <script>
-    (function () {
-      const ov = document.getElementById('suratLoading');
-      document.addEventListener('submit', function (e) {
-        const f = e.target;
-        if (!f || f.id !== 'formSurat') return;
-        setTimeout(() => {
-          if (e.defaultPrevented) return;
-          ov.classList.add('show');
-          ov.setAttribute('aria-hidden', 'false');
-          f.querySelectorAll('button[type=submit]').forEach(b => b.disabled = true);
-        }, 0);
-      });
-      window.addEventListener('pageshow', () => ov.classList.remove('show'));
-    })();
-  </script>
-
-  {{-- (Opsional) Auto-dismiss semua alert setelah 3 detik --}}
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.flash-stack .alert').forEach(el => {
-        setTimeout(() => bootstrap.Alert.getOrCreateInstance(el).close(), 3000);
-      });
-    });
-  </script>
+  @include('partials.notice-dialog')
+  @include('partials.toast')
 
 </body>
 </html>
