@@ -12,7 +12,7 @@ class User extends Authenticatable
     protected $primaryKey = 'id_users';
     
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, \App\Models\Concerns\Auditable;
 
     /**
      * The attributes that are mass assignable.

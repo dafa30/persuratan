@@ -208,7 +208,15 @@ class AuthController extends Controller
         abort_unless(auth()->user()?->role_id === 1, 403);
 
         $user = User::findOrFail($id);
-        $user->delete();
+
+        try {
+            $user->delete();
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Surat arsip dilindungi: user yang masih punya surat tidak boleh dihapus.
+            return redirect()
+                ->route('setting.role.index')
+                ->with('error', 'Pengguna tidak dapat dihapus karena masih memiliki surat.');
+        }
 
         return redirect()
             ->route('setting.role.index')

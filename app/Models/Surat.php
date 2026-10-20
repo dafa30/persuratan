@@ -9,7 +9,7 @@ class Surat extends Model
 {
     protected $primaryKey = 'id_surats';
 
-    use HasFactory;
+    use HasFactory, \App\Models\Concerns\Auditable;
 
     // (opsional) jika nama tabel non-standar, tapi di sini sudah "surats" -> aman.
     // protected $table = 'surats';

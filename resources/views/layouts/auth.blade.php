@@ -178,6 +178,20 @@
       box-shadow: 0 0 0 1px rgba(0, 82, 204, 0.25);
     }
 
+    .pw-toggle-group { position: relative; }
+    .pw-toggle-group input[type="password"],
+    .pw-toggle-group input.pw-visible { padding-right: 3rem; border-radius: 0 999px 999px 0 !important; }
+    .pw-toggle-group input::-ms-reveal,
+    .pw-toggle-group input::-ms-clear { display: none; }
+    .pw-toggle-btn {
+      position: absolute; right: .35rem; top: 50%; transform: translateY(-50%);
+      z-index: 5; border: 0; background: transparent; color: #6B7280;
+      width: 2.2rem; height: 2.2rem; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; cursor: pointer;
+    }
+    .pw-toggle-btn:hover { color: var(--primary); background: #F3F4F6; }
+    .pw-toggle-btn:focus-visible { outline: 2px solid var(--primary); }
+
     .form-check-label {
       font-size: .82rem;
       color: var(--text-muted);
@@ -309,6 +323,29 @@
       btn.querySelector('.spinner-border')?.classList.remove('d-none');
       const btnText = btn.querySelector('.btn-text');
       if (btnText) btnText.textContent = 'Memproses...';
+    });
+
+    // Ikon mata untuk semua kolom password
+    document.querySelectorAll('input[type="password"]').forEach(function (input) {
+      const group = input.closest('.input-group');
+      if (!group) return;
+      group.classList.add('pw-toggle-group');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pw-toggle-btn';
+      btn.setAttribute('aria-label', 'Tampilkan password');
+      btn.setAttribute('aria-pressed', 'false');
+      btn.innerHTML = '<i class="bi bi-eye"></i>';
+      btn.addEventListener('click', function () {
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        input.classList.toggle('pw-visible', show);
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+        btn.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
+        btn.firstElementChild.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+        input.focus();
+      });
+      group.appendChild(btn);
     });
 
     // (Opsional) Tampilkan/ sembunyikan password jika kamu punya checkbox #showPasswordCheck
